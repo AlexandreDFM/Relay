@@ -1,8 +1,6 @@
 #include "Server.hpp"
 
-int main()
-{
-    auto serv = new Server(8080);
-
+int main() {
+    auto server = std::make_shared<Server>(8080);
     return 0;
 }

@@ -1,30 +1,32 @@
 #pragma once
-#include "Chats.hpp"
 
-#include <boost/asio.hpp>
-#include <iostream>
 #include <map>
 #include <mutex>
 #include <thread>
+#include <memory>
+#include <iostream>
+#include <boost/asio.hpp>
 
-class Clients;
+#include "Chats.hpp"
+
+class Client;
 
 using boost::asio::ip::tcp;
 
-class Server {
-public:
-    Server(int port);
-    ~Server();
-    void handleNewClient(tcp::socket socket);
-    void broadcast(std::string msg);
+class Server : public std::enable_shared_from_this<Server> {
+    public:
+        Server(int port);
+        ~Server();
+        void handleNewClient(tcp::socket socket);
+        void broadcast(std::string msg);
 
-private:
-    boost::asio::io_context io_context;
-    tcp::acceptor acceptor;
-    std::mutex map_mutex;
+    private:
+        boost::asio::io_context io_context;
+        tcp::acceptor acceptor;
+        std::mutex map_mutex;
 
-    std::map<tcp::endpoint, std::shared_ptr<Client>> _listClient;
-    std::map<std::string, Chats> _listChats;
+        std::map<tcp::endpoint, std::shared_ptr<Client>> _listClient;
+        std::map<std::string, Chats> _listChats;
 };
 
 /// thread qui listen en boucle et feed un buufer circulaire
