@@ -9,6 +9,10 @@ cd frontend
 
 npm install
 
+cp ./environnements/.env.frontend.template ./.env.local
+
+# Edit the .env.local file to match your configuration
+
 cd ../backend
 
 ./build.sh # This will build the backend on Linux
