@@ -1,4 +1,5 @@
-import { Image, StyleSheet } from "react-native";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
@@ -17,6 +18,8 @@ interface UserChat {
 }
 
 export default function TabOneScreen() {
+    const router = useRouter();
+
     const chats: UserChat[] = [
         {
             id: "1",
@@ -72,38 +75,49 @@ export default function TabOneScreen() {
         },
     ];
 
+    const handlePress = (chatId: string) => {
+        router.push("/(tabs)/chat");
+        // console.log(`Chat with ID ${chatId} clicked!`);
+    };
+
     return (
         <View className="flex-1">
             {chats &&
                 chats.map((chat) => (
-                    <View key={chat.id} className="w-full">
-                        <View
-                            key={chat.id}
-                            className="w-full flex-row align-middle p-4"
-                        >
-                            <Image
-                                source={{ uri: chat.imageUri }}
-                                className="w-12 h-12 rounded-full mr-4"
-                            />
-                            <View className="w-full">
-                                <View className="pr-20 flex-row">
-                                    <Text className="font-bold text-xl">
-                                        {chat.name}
-                                    </Text>
-                                    <Text className="ml-auto text-gray-400 font-light text-sm">
-                                        {chat.messages[0].createdAt}
-                                    </Text>
+                    <TouchableOpacity
+                        key={chat.id}
+                        onPress={() => handlePress(chat.id)}
+                        activeOpacity={0.7}
+                    >
+                        <View key={chat.id} className="w-full">
+                            <View
+                                key={chat.id}
+                                className="w-full flex-row align-middle p-4"
+                            >
+                                <Image
+                                    source={{ uri: chat.imageUri }}
+                                    className="w-12 h-12 rounded-full mr-4"
+                                />
+                                <View className="w-full">
+                                    <View className="pr-20 flex-row">
+                                        <Text className="font-bold text-xl">
+                                            {chat.name}
+                                        </Text>
+                                        <Text className="ml-auto text-gray-400 font-light text-sm">
+                                            {chat.messages[0].createdAt}
+                                        </Text>
+                                    </View>
+                                    <Text>{chat.messages[0].content}</Text>
                                 </View>
-                                <Text>{chat.messages[0].content}</Text>
                             </View>
+                            <View
+                                className="my-1 w-full h-1"
+                                key={chat.id}
+                                lightColor="#eee"
+                                darkColor="rgba(255,255,255,0.1)"
+                            />
                         </View>
-                        <View
-                            className="my-1 w-full h-1"
-                            key={chat.id}
-                            lightColor="#eee"
-                            darkColor="rgba(255,255,255,0.1)"
-                        />
-                    </View>
+                    </TouchableOpacity>
                 ))}
         </View>
     );
