@@ -6,7 +6,7 @@ import { TouchableOpacity } from "react-native";
 const initialUser = {
     username: "HyunChul Joe",
     password: "MyPasswordIsReallyStrong",
-    email: "joh@kmu.ac.kr"
+    email: "joh@kmu.ac.kr",
 };
 
 type UserField = "username" | "password" | "email";
@@ -39,7 +39,10 @@ export default function SettingsScreen() {
             <View style={styles.infoContainer}>
                 <View style={styles.row}>
                     <Text style={styles.option}>Username: {user.username}</Text>
-                    <TouchableOpacity style={styles.button} onPress={() => setEditingField("username")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => setEditingField("username")}
+                    >
                         <Text style={styles.buttonText}>Change</Text>
                     </TouchableOpacity>
                 </View>
@@ -51,14 +54,20 @@ export default function SettingsScreen() {
                             onChangeText={setNewData}
                             placeholder="Enter new username"
                         />
-                        <TouchableOpacity style={styles.button} onPress={() => handleChangeData("username")}>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => handleChangeData("username")}
+                        >
                             <Text style={styles.buttonText}>Save</Text>
                         </TouchableOpacity>
                     </View>
                 )}
                 <View style={styles.row}>
                     <Text style={styles.option}>Email: {user.email}</Text>
-                    <TouchableOpacity style={styles.button} onPress={() => setEditingField("email")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => setEditingField("email")}
+                    >
                         <Text style={styles.buttonText}>Change</Text>
                     </TouchableOpacity>
                 </View>
@@ -70,17 +79,30 @@ export default function SettingsScreen() {
                             onChangeText={setNewData}
                             placeholder="Enter new email"
                         />
-                        <TouchableOpacity style={styles.button} onPress={() => handleChangeData("email")}>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => handleChangeData("email")}
+                        >
                             <Text style={styles.buttonText}>Save</Text>
                         </TouchableOpacity>
                     </View>
                 )}
                 <View style={styles.row}>
-                    <Text style={styles.option}>Password: {showPassword ? user.password : "********"}</Text>
-                    <TouchableOpacity style={styles.button} onPress={() => setShowPassword(!showPassword)}>
-                        <Text style={styles.buttonText}>{showPassword ? "Hide" : "Show"}</Text>
+                    <Text style={styles.option}>
+                        Password: {showPassword ? user.password : "********"}
+                    </Text>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => setShowPassword(!showPassword)}
+                    >
+                        <Text style={styles.buttonText}>
+                            {showPassword ? "Hide" : "Show"}
+                        </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => setEditingField("password")}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => setEditingField("password")}
+                    >
                         <Text style={styles.buttonText}>Change</Text>
                     </TouchableOpacity>
                 </View>
@@ -92,13 +114,26 @@ export default function SettingsScreen() {
                             onChangeText={setNewData}
                             placeholder="Enter new password"
                         />
-                        <TouchableOpacity style={styles.button} onPress={() => handleChangeData("password")}>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => handleChangeData("password")}
+                        >
                             <Text style={styles.buttonText}>Save</Text>
                         </TouchableOpacity>
                     </View>
                 )}
             </View>
-            <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
+            <TouchableOpacity
+                className="bg-pink-700"
+                style={styles.deconnexionButton}
+                onPress={handleDeleteAccount}
+            >
+                <Text style={styles.deleteButtonText}>Deconnexion Account</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={handleDeleteAccount}
+            >
                 <Text style={styles.deleteButtonText}>Delete Account</Text>
             </TouchableOpacity>
 
@@ -110,7 +145,9 @@ export default function SettingsScreen() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                        <Text style={styles.modalText}>
+                            Are you sure you want to delete your account?
+                        </Text>
                         <View style={styles.modalButtons}>
                             <TouchableOpacity
                                 style={[styles.button, styles.buttonClose]}
@@ -173,6 +210,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: "70%",
         marginRight: 10,
+    },
+    deconnexionButton: {
+        marginTop: 20,
+        padding: 10,
+        borderRadius: 5,
     },
     deleteButton: {
         marginTop: 20,
