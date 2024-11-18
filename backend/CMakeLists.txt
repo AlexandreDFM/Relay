@@ -19,8 +19,8 @@ if (NOT Boost_FOUND)
     # Include CPM (CMake Package Manager)
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/_cpm/CPM.cmake")
         file(DOWNLOAD
-            https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/CPM.cmake
-            ${CMAKE_BINARY_DIR}/_cpm/CPM.cmake
+                https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/CPM.cmake
+                ${CMAKE_BINARY_DIR}/_cpm/CPM.cmake
         )
     endif()
 
@@ -34,11 +34,11 @@ if (NOT Boost_FOUND)
     set(BOOST_VERSION 1.84.0)
 
     CPMAddPackage(
-        NAME Boost
-        VERSION ${BOOST_VERSION}
-        GITHUB_REPOSITORY "boostorg/boost"
-        GIT_TAG "boost-${BOOST_VERSION}"
-        OPTIONS "BOOST_ENABLE_CMAKE ON"
+            NAME Boost
+            VERSION ${BOOST_VERSION}
+            GITHUB_REPOSITORY "boostorg/boost"
+            GIT_TAG "boost-${BOOST_VERSION}"
+            OPTIONS "BOOST_ENABLE_CMAKE ON"
     )
 
     if (Boost_ADDED)
@@ -53,9 +53,9 @@ endif()
 
 # Add the executable from the source files in the src directory
 file(GLOB_RECURSE SOURCES
-    ${CMAKE_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_SOURCE_DIR}/includes/*.h
-    ${CMAKE_SOURCE_DIR}/includes/*.hpp
+        ${CMAKE_SOURCE_DIR}/src/*.cpp
+        ${CMAKE_SOURCE_DIR}/includes/*.h
+        ${CMAKE_SOURCE_DIR}/includes/*.hpp
 )
 
 # Create the executable
@@ -63,6 +63,9 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Add Boost include directories and libraries after the target is created
 if (Boost_FOUND OR Boost_ADDED)
-    target_link_libraries(${PROJECT_NAME} Boost::iostreams pthread)
+    if (WIN32)
+        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams ws2_32 pthread)
+    else()
+        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams)
+    endif()
 endif()
-
