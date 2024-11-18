@@ -1,8 +1,8 @@
-#include "Server.hpp"
+#include "Singleton.hpp"
 
 int main()
 {
-    auto serv = new Server(8080);
+    getInstanceServer();
 
     return 0;
 }

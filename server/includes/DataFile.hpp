@@ -13,7 +13,8 @@ public:
     void update_json_file();
     std::mutex _JsonMutex;
 
-private:
     std::string _path;
+
+private:
     boost::property_tree::ptree _json;
 };

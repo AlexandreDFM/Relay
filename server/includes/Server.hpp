@@ -15,9 +15,8 @@ using boost::asio::ip::tcp;
 class Server {
 public:
     Server(int port);
-    ~Server();
     void handleNewClient(tcp::socket socket);
-    void broadcast(std::string msg);
+    void broadcast(std::string msg, std::vector<int> ids, bool banned);
 
 private:
     boost::asio::io_context io_context;
@@ -28,6 +27,8 @@ private:
     std::map<std::string, Chats> _listChats;
 
     std::shared_ptr<JsonFile> _UserJson;
+    std::shared_ptr<JsonFile> _ChatsJson;
+    std::shared_ptr<std::vector<std::shared_ptr<JsonFile>>> _ListChatJson;
 };
 
 /// thread qui listen en boucle et feed un buufer circulaire
