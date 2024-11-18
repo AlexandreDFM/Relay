@@ -1,5 +1,6 @@
 #pragma once
 #include "Chats.hpp"
+#include "Client.hpp"
 
 #include <boost/asio.hpp>
 #include <iostream>
@@ -25,6 +26,8 @@ private:
 
     std::map<tcp::endpoint, std::shared_ptr<Client>> _listClient;
     std::map<std::string, Chats> _listChats;
+
+    std::shared_ptr<JsonFile> _UserJson;
 };
 
 /// thread qui listen en boucle et feed un buufer circulaire

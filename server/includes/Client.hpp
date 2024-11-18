@@ -1,4 +1,5 @@
 #pragma once
+#include "DataFile.hpp"
 
 #include <boost/asio.hpp>
 #include <iostream>
@@ -13,17 +14,19 @@ class Server;
 
 class Client {
 public:
-    Client(std::shared_ptr<Server> serv, tcp::endpoint& edp, tcp::socket& socket);
+    Client(tcp::endpoint& edp, tcp::socket& socket, std::shared_ptr<JsonFile> UserJson);
 
     void handleCommand(std::string msg);
-    void tryConnectClient(std::vector<std::string>);
     void send_message(std::string msg);
 
-private:
-    tcp::endpoint _endp;
+    // Command
+    void tryConnectClient(std::vector<std::string>);
+    void addNewUser(std::vector<std::string> args);
+
+private : tcp::endpoint _endp;
     tcp::socket& _socket;
-    std::shared_ptr<Server> _serv;
     bool _connected;
+    std::shared_ptr<JsonFile> _UserJson;
 };
 
 // pour broadcast: update le chat actuelle -> dans server class detection d'un ajout puis broadcast au autres

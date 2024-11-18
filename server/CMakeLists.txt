@@ -21,8 +21,13 @@ else()
 endif()
 
 # Add the executable or library from the source files in the src directory
-file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(SRCLib 
+    "src/Client.cpp"
+    "src/DataFile.cpp"
+    "src/Server.cpp"
+)
+add_executable(${PROJECT_NAME} src/main.cpp ${SOURCES})
 
 # Link Boost libraries
-target_link_libraries(${PROJECT_NAME} Boost::iostreams pthread)
+target_link_libraries(${PROJECT_NAME} SRCLib Boost::iostreams pthread)
+# target_link_libraries(${PROJECT_NAME} PRIVATE SRCLib)

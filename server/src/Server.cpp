@@ -1,10 +1,11 @@
 #include "Server.hpp"
-#include "Client.hpp"
 
 Server::Server(int port)
     : acceptor(io_context, tcp::endpoint(tcp::v4(), port))
 {
     std::cout << "Server running on port " << port << "..." << std::endl;
+
+    _UserJson = std::make_shared<JsonFile>("../Database/User.json");
 
     // Launch a thread to listen for clients and process messages
     // std::thread([this]() {
@@ -37,7 +38,7 @@ void Server::handleNewClient(tcp::socket socket)
         char data[1024];
 
         if (_listClient.find(remote_endpoint) == _listClient.end())
-            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, socket);
+            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, socket, _UserJson);
 
         for (;;) {
             boost::system::error_code error;
