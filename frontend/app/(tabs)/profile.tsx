@@ -6,28 +6,33 @@ import { Text, View } from "@/components/Themed";
 interface User {
     id: string;
     name: string;
+    email: string;
     imageUri: string;
+    password: string;
 }
 
 export default function ProfileScreen() {
     const user: User = {
         id: "1",
-        name: "Elon Musk",
+        name: "HyunChul Joe", //si possible relier ça au back et garder les mêmes infos entre le profil et les settings
+        email: "joh@kmu.ac.kr", //same here
         imageUri:
-            "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/elon.png",
+            "https://lh3.googleusercontent.com/55OB_phWrUDH6ThZuNxCfwLham4Zwzr1UelbkjKmdB4NCtLc9Itzm7fayKiqAfqolhzARpB83VrLQNWAT-CGCyyPLy7APpeXYI9dCK4XfJA=w1280",
+        password: "MyPasswordIsReallyStrong",
     };
 
     return (
-        <View className="flex-1 items-center justify-center">
-            <View>
+        <View style={styles.container}>
+            <View style={styles.imageContainer}>
                 <Image
-                    source={{ uri: user.imageUri }}
-                    className="mr-4 h-full w-full rounded-full"
+                    source={require("@/assets/images/best-teacher.png")}
+                    style={styles.image}
                 />
-                <Text className="text-xl font-bold">{user.name}</Text>
-                <Text>CEO of SpaceX</Text>
+                <Text style={styles.name}>{user.name}</Text>
+                <Text>Funniest professor of Keimyung</Text>
+                <Text style={styles.email}>{user.email}</Text>
                 <View
-                    className="my-4 h-1 w-4/5"
+                    style={styles.separator}
                     lightColor="#eee"
                     darkColor="rgba(255,255,255,0.1)"
                 />
@@ -35,3 +40,34 @@ export default function ProfileScreen() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    imageContainer: {
+        alignItems: "center",
+    },
+    image: {
+        width: 200,
+        height: 200,
+        borderRadius: 20, // Less rounded corners
+    },
+    name: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginTop: 10,
+    },
+    email: {
+        marginTop: 10,
+        fontSize: 18,
+        color: "gray",
+    },
+    separator: {
+        marginVertical: 30,
+        height: 1,
+        width: "80%",
+    },
+});
