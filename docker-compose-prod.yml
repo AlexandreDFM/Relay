@@ -1,0 +1,28 @@
+name: relay-dev
+
+services:
+  # Next Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: docker-next
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+  # C++ Backend
+  backend:
+    container_name: relay-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/home/dev
+
+networks:
+  relay-network:
+    driver: bridge
