@@ -2,25 +2,46 @@ import { Image, StyleSheet } from "react-native";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    imageUri: string;
-    password: string;
-}
+import { UserAuth } from "@/types/IUserAuth";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthProvider";
+import { useLocalSearchParams } from "expo-router";
+import { useUserID } from "@/hook/useUser";
 
 export default function ProfileScreen() {
-    const user: User = {
-        id: "1",
-        name: "HyunChul Joe", //si possible relier ça au back et garder les mêmes infos entre le profil et les settings
-        email: "joh@kmu.ac.kr", //same here
-        imageUri:
-            "https://lh3.googleusercontent.com/55OB_phWrUDH6ThZuNxCfwLham4Zwzr1UelbkjKmdB4NCtLc9Itzm7fayKiqAfqolhzARpB83VrLQNWAT-CGCyyPLy7APpeXYI9dCK4XfJA=w1280",
-        password: "MyPasswordIsReallyStrong",
-    };
+    const [userProfile, setUserProfile] = useState<UserAuth>({
+        id: "",
+        name: "",
+        imageUri: "",
+        status: "",
+        email: "",
+        password: "",
+        createdAt: "",
+        updatedAt: "",
+    });
 
+    const { user } = useAuth();
+    const params = useLocalSearchParams();
+    const userId = Array.isArray(params.userId)
+        ? params.userId[0]
+        : params.userId;
+
+    useEffect(() => {
+        // useUserID(user?.accessToken, Number(userId)).then((data) =>
+        //     setUserProfile(data),
+        // );
+        setUserProfile({
+            id: "0",
+            name: "HyunChul Joe",
+            imageUri:
+                "https://lh3.googleusercontent.com/55OB_phWrUDH6ThZuNxCfwLham4Zwzr1UelbkjKmdB4NCtLc9Itzm7fayKiqAfqolhzARpB83VrLQNWAT-CGCyyPLy7APpeXYI9dCK4XfJA=w1280",
+            status: "Funniest professor of Keimyung",
+            email: "joh@kmu.ac.kr",
+            password: "MyPasswordIsReallyStrong",
+            createdAt: "2021-09-15T12:48:00.000Z",
+            updatedAt: "2021-09-15T12:48:00.000Z",
+        });
+    }, [user]);
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
@@ -28,9 +49,9 @@ export default function ProfileScreen() {
                     source={require("@/assets/images/best-teacher.png")}
                     style={styles.image}
                 />
-                <Text style={styles.name}>{user.name}</Text>
-                <Text>Funniest professor of Keimyung</Text>
-                <Text style={styles.email}>{user.email}</Text>
+                <Text style={styles.name}>{userProfile.name}</Text>
+                <Text>{userProfile.status}</Text>
+                <Text style={styles.email}>{userProfile.email}</Text>
                 <View
                     style={styles.separator}
                     lightColor="#eee"
