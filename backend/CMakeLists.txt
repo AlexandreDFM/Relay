@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${CMAKE_SOURCE_DIR}/includes)
 
 # Attempt to find the Boost library
-find_package(Boost COMPONENTS iostreams)
+find_package(Boost COMPONENTS iostreams system json beast)
 
 if (NOT Boost_FOUND)
     message(STATUS "Boost not found. Falling back to CPM for downloading Boost.")
@@ -64,9 +64,9 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 # Add Boost include directories and libraries after the target is created
 if (Boost_FOUND OR Boost_ADDED)
     if (WIN32)
-        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams ws2_32 pthread)
+        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams Boost::system Boost::json Boost::beast ws2_32 Mswsock pthread)
     else()
-        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams pthread)
+        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams Boost::system Boost::json Boost::beast pthread)
     endif()
 endif()
 
