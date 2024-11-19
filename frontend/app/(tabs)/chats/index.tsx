@@ -4,7 +4,7 @@ import { Text, View } from "@/components/Themed";
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function HomeScreen() {
+export default function ChatsScreen() {
     const router = useRouter();
 
     const chats: UserChat[] = [
@@ -31,7 +31,7 @@ export default function HomeScreen() {
             isConnected: true,
             messages: [
                 {
-                    id: "2",
+                    id: "1",
                     userId: "2",
                     content: "I'm in the process of building a rocket",
                     createdAt: "2021-09-15T12:48:00.000Z",
@@ -46,7 +46,7 @@ export default function HomeScreen() {
             isConnected: false,
             messages: [
                 {
-                    id: "3",
+                    id: "1",
                     userId: "3",
                     content: "I'm stepping down as CEO of Amazon",
                     createdAt: "2021-09-15T12:48:00.000Z",
@@ -61,7 +61,7 @@ export default function HomeScreen() {
             isConnected: false,
             messages: [
                 {
-                    id: "4",
+                    id: "1",
                     userId: "4",
                     content: "I'm donating 50 billion dollars",
                     createdAt: "2021-09-15T12:48:00.000Z",
@@ -70,48 +70,49 @@ export default function HomeScreen() {
         },
     ];
 
+    const handlePress = (chatId: string) => {
+        router.push(`/chats/${chatId}`);
+    };
+
     return (
         <View className="flex-1">
-            <View className="p-4">
-                <Text className="text-lg font-bold">Connected Players:</Text>
-                {chats.map(
-                    (chat, index) =>
-                        chat.isConnected && (
+            {chats &&
+                chats.map((chat) => (
+                    <TouchableOpacity
+                        key={chat.id}
+                        onPress={() => handlePress(chat.id)}
+                        activeOpacity={0.7}
+                    >
+                        <View key={chat.id} className="w-full">
                             <View
-                                key={index}
-                                className="ml-4 flex-row items-center p-2"
+                                key={chat.id}
+                                className="w-full flex-row p-4 align-middle"
                             >
                                 <Image
                                     source={{ uri: chat.imageUri }}
-                                    className="mr-4 h-10 w-10 rounded-full"
+                                    className="mr-4 h-12 w-12 rounded-full"
                                 />
-                                {chat.isConnected && (
-                                    <div className="absolute bottom-2 h-3 w-3 rounded-full border-2 border-black bg-green-500" />
-                                )}
-                                <Text className="text-md">{chat.name}</Text>
+                                <View className="w-full">
+                                    <View className="flex-row pr-20">
+                                        <Text className="text-xl font-bold">
+                                            {chat.name}
+                                        </Text>
+                                        <Text className="ml-auto text-sm font-light text-gray-400">
+                                            {chat.messages[0].createdAt}
+                                        </Text>
+                                    </View>
+                                    <Text>{chat.messages[0].content}</Text>
+                                </View>
                             </View>
-                        ),
-                )}
-                <Text className="text-lg font-bold">Disconnected Players:</Text>
-                {chats.map(
-                    (chat, index) =>
-                        !chat.isConnected && (
                             <View
-                                key={index}
-                                className="ml-4 flex-row items-center p-2"
-                            >
-                                <Image
-                                    source={{ uri: chat.imageUri }}
-                                    className="mr-4 h-10 w-10 rounded-full"
-                                />
-                                {!chat.isConnected && (
-                                    <div className="absolute bottom-2 h-3 w-3 rounded-full border-2 border-black bg-red-500" />
-                                )}
-                                <Text className="text-md">{chat.name}</Text>
-                            </View>
-                        ),
-                )}
-            </View>
+                                className="my-1 h-1 w-full"
+                                key={chat.id}
+                                lightColor="#eee"
+                                darkColor="rgba(255,255,255,0.1)"
+                            />
+                        </View>
+                    </TouchableOpacity>
+                ))}
         </View>
     );
 }

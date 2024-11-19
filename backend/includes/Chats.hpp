@@ -1,7 +1,7 @@
 #pragma once
 
 class Chats {
-public:
+    public:
 };
 
 // add mutex, client lock it to write message in file

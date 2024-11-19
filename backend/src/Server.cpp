@@ -23,6 +23,11 @@ Server::Server(int port)
     // }).detach();
 }
 
+Server::~Server()
+{
+    io_context.stop();
+}
+
 void Server::broadcast(std::string msg)
 {
     for (const auto& pair : _listClient) {
@@ -37,7 +42,7 @@ void Server::handleNewClient(tcp::socket socket)
         char data[1024];
 
         if (_listClient.find(remote_endpoint) == _listClient.end())
-            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, socket);
+            _listClient[remote_endpoint] = std::make_shared<Client>(shared_from_this(), remote_endpoint, socket);
 
         for (;;) {
             boost::system::error_code error;
