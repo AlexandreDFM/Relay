@@ -1,5 +1,5 @@
 {
-    "nb_serv": 1,
+    "nb_serv": 2,
     "servers": [
         {
             "name": "my BBB Serv",
@@ -12,6 +12,14 @@
             "chats": [
                 0
             ]
+        },
+        {
+            "name": "Nobody love me",
+            "id": 1,
+            "aut_user": [
+                2
+            ],
+            "chats": []
         }
     ]
 }

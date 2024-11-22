@@ -28,6 +28,7 @@ private:
 
     std::shared_ptr<JsonFile> _UserJson;
     std::shared_ptr<JsonFile> _ChatsJson;
+    std::shared_ptr<JsonFile> _ServerJson;
     std::shared_ptr<std::vector<std::shared_ptr<JsonFile>>> _ListChatJson;
 };
 

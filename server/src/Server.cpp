@@ -7,6 +7,7 @@ Server::Server(int port)
 
     _UserJson = std::make_shared<JsonFile>("../Database/User.json");
     _ChatsJson = std::make_shared<JsonFile>("../Database/Chats.json");
+    _ServerJson = std::make_shared<JsonFile>("../Database/Servers.json");
     _ListChatJson = std::make_shared<std::vector<std::shared_ptr<JsonFile>>>();
 
     // Launch a thread to listen for clients and process messages
@@ -49,7 +50,7 @@ void Server::handleNewClient(tcp::socket socket)
         char data[1024];
 
         if (_listClient.find(remote_endpoint) == _listClient.end())
-            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, socket, _UserJson, _ChatsJson, _ListChatJson);
+            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, socket, _UserJson, _ChatsJson, _ServerJson, _ListChatJson);
 
         for (;;) {
             boost::system::error_code error;
