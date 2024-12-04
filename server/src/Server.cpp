@@ -46,35 +46,39 @@ void Server::broadcast(std::string msg, std::vector<int> ids, bool banned)
 void Server::handleNewClient(tcp::socket socket)
 {
     try {
-        auto remote_endpoint = socket.remote_endpoint();
-        char data[1024];
+        // Upgrade the connection to a WebSocket
+        websocket::stream<tcp::socket> ws{std::move(socket)};
+        ws.accept();
 
-        if (_listClient.find(remote_endpoint) == _listClient.end())
-            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, socket, _UserJson, _ChatsJson, _ServerJson, _ListChatJson);
+        std::cout << "New WebSocket client connected: " << ws.next_layer().remote_endpoint() << std::endl;
+
+        auto remote_endpoint = ws.next_layer().remote_endpoint();
+        if (_listClient.find(remote_endpoint) == _listClient.end()) {
+            _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, ws, _UserJson, _ChatsJson, _ServerJson, _ListChatJson);
+        }
+
+        // Buffer for reading WebSocket messages
+        boost::beast::flat_buffer buffer;
 
         for (;;) {
-            boost::system::error_code error;
-            size_t length = socket.read_some(boost::asio::buffer(data), error);
-
-            if (error == boost::asio::error::eof) {
-                // Connection closed cleanly by peer
-                break;
-            } else if (error) {
-                // Handle other errors
-                throw boost::system::system_error(error);
-            }
+            ws.read(buffer); // Read WebSocket message into buffer
 
             // Lock the map before modifying it
             {
                 std::lock_guard<std::mutex> lock(map_mutex);
-                std::string message(data, length);
+                std::string message = boost::beast::buffers_to_string(buffer.data());
 
-                // Store the message and sender's endpoint in the map
+                std::cout << "Received message: " << message << std::endl;
+
+                // Process the message
                 auto args = _listClient[remote_endpoint]->handleCommand(message);
                 broadcast(std::get<2>(args), std::get<0>(args), std::get<1>(args));
             }
+
+            // Clear the buffer for the next message
+            buffer.clear();
         }
     } catch (const std::exception& e) {
-        std::cerr << "Exception in client handler thread: " << e.what() << std::endl;
+        std::cerr << "Exception in WebSocket client handler thread: " << e.what() << std::endl;
     }
 }

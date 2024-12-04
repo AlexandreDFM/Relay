@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${CMAKE_SOURCE_DIR}/includes)
 
 # Attempt to find the Boost library
-find_package(Boost COMPONENTS iostreams system json beast property_tree)
+find_package(Boost COMPONENTS iostreams system thread json beast property_tree)
 
 if (NOT Boost_FOUND)
     message(STATUS "Boost not found. Falling back to CPM for downloading Boost.")
@@ -38,7 +38,7 @@ if (NOT Boost_FOUND)
             VERSION ${BOOST_VERSION}
             GITHUB_REPOSITORY "boostorg/boost"
             GIT_TAG "boost-${BOOST_VERSION}"
-            OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES asio\\\;iostreams\\\;system\\\;json\\\;beast\\\;property_tree"
+            OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES asio\\\;iostreams\\\;system\\\;thread\\\;json\\\;beast\\\;property_tree"
     )
 
     if (Boost_ADDED)
@@ -71,9 +71,9 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Add Boost include directories and libraries after the target is created
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::json Boost::beast ws2_32 Mswsock pthread)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast ws2_32 Mswsock pthread)
 else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::json Boost::beast pthread)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast pthread)
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

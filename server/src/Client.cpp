@@ -4,6 +4,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <string>
+#include <regex>
 
 std::string get_current_datetime()
 {
@@ -32,7 +33,7 @@ std::string mergeStringsExceptFirst(const std::vector<std::string>& args, int st
 std::pair<int, std::vector<std::string>> splitOpcodeAndArguments(std::string& input)
 {
     // Find the first occurrence of "\r"
-    auto separator = " ";
+    auto separator = "\r";
     size_t separatorPos = input.find(separator);
 
     if (input[input.length() - 1] == '\n' && input[input.length() - 2] == '\r') {
@@ -41,12 +42,20 @@ std::pair<int, std::vector<std::string>> splitOpcodeAndArguments(std::string& in
     }
 
     if (separatorPos == std::string::npos) {
-        std::vector<std::string> nul;
-        return { std::stoi(input), nul };
+        if (std::regex_match(input, std::regex("[+-]?[0-9]+"))) {
+            std::vector<std::string> nul;
+            return { std::stoi(input), nul };
+        } else {
+            throw std::invalid_argument("Invalid opcode: " + input);
+        }
     }
 
     // Split the string into opcode and arguments
-    int opcode = std::stoi(input.substr(0, separatorPos));
+    std::string opcodeStr = input.substr(0, separatorPos);
+    if (!std::regex_match(opcodeStr, std::regex("[+-]?[0-9]+"))) {
+        throw std::invalid_argument("Invalid opcode: " + opcodeStr);
+    }
+    int opcode = std::stoi(opcodeStr);
     std::string arguments = input.substr(separatorPos + 1);
 
     std::vector<std::string> argList;
@@ -98,9 +107,10 @@ std::string strip(const std::string& input)
 //
 //
 
-Client::Client(tcp::endpoint& endp, tcp::socket& socket, std::shared_ptr<JsonFile> UserJson, std::shared_ptr<JsonFile> ChatJson, std::shared_ptr<JsonFile> ServerJson, std::shared_ptr<std::vector<std::shared_ptr<JsonFile>>> ListChatJson)
-    : _socket(socket)
-    , _endp(endp)
+Client::Client(tcp::endpoint& endp, websocket::stream<tcp::socket>& ws, std::shared_ptr<JsonFile> UserJson, std::shared_ptr<JsonFile> ChatJson, std::shared_ptr<JsonFile> ServerJson, std::shared_ptr<std::vector<std::shared_ptr<JsonFile>>> ListChatJson)
+    :
+    _endp(endp)
+    , _ws(ws)
     , _connected(false)
     , _UserJson(UserJson)
     , _ChatsJson(ChatJson)
@@ -131,12 +141,18 @@ std::shared_ptr<JsonFile> Client::_loadChat(std::string id_chat)
 void Client::send_message(std::string message)
 {
     try {
-        // Send the message to the connected endpoint
-        boost::asio::write(_socket, boost::asio::buffer(message));
+        // Ensure WebSocket stream is open before sending
+        if (!_ws.is_open()) {
+            std::cerr << "WebSocket connection is not open. Cannot send message." << std::endl;
+            return;
+        }
+
+        // Send the message through the WebSocket
+        _ws.write(boost::asio::buffer(message));
 
         std::cout << "Message sent to " << _endp.address().to_string() << ":" << _endp.port() << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "Failed to send message: " << e.what() << std::endl;
+        std::cerr << "Failed to send WebSocket message: " << e.what() << std::endl;
     }
 }
 

@@ -2,11 +2,15 @@
 #include "Chats.hpp"
 #include "Client.hpp"
 
-#include <boost/asio.hpp>
-#include <iostream>
 #include <map>
 #include <mutex>
 #include <thread>
+#include <iostream>
+#include <boost/asio.hpp>
+#include <boost/beast/websocket.hpp>
+#include <boost/beast/core/buffers_to_string.hpp>
+
+namespace websocket = boost::beast::websocket;
 
 class Clients;
 
@@ -19,6 +23,9 @@ public:
     void broadcast(std::string msg, std::vector<int> ids, bool banned);
 
 private:
+    void doAccept();
+    void onAccept(boost::beast::error_code ec, tcp::socket socket);
+
     boost::asio::io_context io_context;
     tcp::acceptor acceptor;
     std::mutex map_mutex;

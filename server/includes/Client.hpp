@@ -1,20 +1,22 @@
 #pragma once
 #include "DataFile.hpp"
 
-#include <boost/asio.hpp>
-#include <iostream>
 #include <map>
 #include <mutex>
-#include <string>
 #include <thread>
+#include <string>
+#include <iostream>
+#include <boost/asio.hpp>
+#include <boost/beast/websocket.hpp>
+
+namespace websocket = boost::beast::websocket;
 
 using boost::asio::ip::tcp;
 typedef std::tuple<std::vector<int>, bool, std::string> BROADCAST_ARGS;
 
 class Client {
 public:
-    Client(tcp::endpoint& endp, tcp::socket& socket, std::shared_ptr<JsonFile> UserJson, std::shared_ptr<JsonFile> ChatJson, std::shared_ptr<JsonFile> ServerJson, std::shared_ptr<std::vector<std::shared_ptr<JsonFile>>> ListChatJson);
-
+    Client(tcp::endpoint& endp, websocket::stream<tcp::socket>& ws, std::shared_ptr<JsonFile> UserJson, std::shared_ptr<JsonFile> ChatJson, std::shared_ptr<JsonFile> ServerJson, std::shared_ptr<std::vector<std::shared_ptr<JsonFile>>> ListChatJson);
     BROADCAST_ARGS handleCommand(std::string msg);
     void send_message(std::string msg);
 
@@ -46,7 +48,7 @@ private:
     std::shared_ptr<JsonFile> _loadChat(std::string id_chat);
 
     tcp::endpoint _endp;
-    tcp::socket& _socket;
+    websocket::stream<tcp::socket>& _ws;
     bool _connected;
     std::shared_ptr<JsonFile> _UserJson;
     std::shared_ptr<JsonFile> _ChatsJson;
