@@ -43,17 +43,21 @@ export default function ProfileScreen() {
         });
     }, [user]);
     return (
-        <View style={styles.container}>
-            <View style={styles.imageContainer}>
+        <View className="flex-1 items-center justify-center">
+            <View className="items-center">
                 <Image
                     source={require("@/assets/images/best-teacher.png")}
-                    style={styles.image}
+                    className="h-52 w-52 rounded-3xl"
                 />
-                <Text style={styles.name}>{userProfile.name}</Text>
+                <Text className="mt-3 text-2xl font-bold">
+                    {userProfile.name}
+                </Text>
                 <Text>{userProfile.status}</Text>
-                <Text style={styles.email}>{userProfile.email}</Text>
+                <Text className="mt-3 text-lg color-gray-500">
+                    {userProfile.email}
+                </Text>
                 <View
-                    style={styles.separator}
+                    className="my-8 h-1 w-4/5"
                     lightColor="#eee"
                     darkColor="rgba(255,255,255,0.1)"
                 />
@@ -61,34 +65,3 @@ export default function ProfileScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    imageContainer: {
-        alignItems: "center",
-    },
-    image: {
-        width: 200,
-        height: 200,
-        borderRadius: 20, // Less rounded corners
-    },
-    name: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginTop: 10,
-    },
-    email: {
-        marginTop: 10,
-        fontSize: 18,
-        color: "gray",
-    },
-    separator: {
-        marginVertical: 30,
-        height: 1,
-        width: "80%",
-    },
-});

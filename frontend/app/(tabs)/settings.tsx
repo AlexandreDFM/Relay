@@ -1,7 +1,13 @@
+import {
+    StyleSheet,
+    TextInput,
+    Modal,
+    useColorScheme,
+    Appearance,
+} from "react-native";
 import { useState } from "react";
-import { StyleSheet, TextInput, Modal } from "react-native";
-import { Text, View } from "@/components/Themed";
 import { TouchableOpacity } from "react-native";
+import { Text, View } from "@/components/Themed";
 
 const initialUser = {
     username: "HyunChul Joe",
@@ -12,10 +18,12 @@ const initialUser = {
 type UserField = "username" | "password" | "email";
 
 export default function SettingsScreen() {
+    const colorScheme = useColorScheme();
+
+    const [newData, setNewData] = useState("");
     const [user, setUser] = useState(initialUser);
     const [showPassword, setShowPassword] = useState(false);
     const [editingField, setEditingField] = useState<UserField | null>(null);
-    const [newData, setNewData] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
 
     const handleDeleteAccount = () => {
@@ -35,106 +43,146 @@ export default function SettingsScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.infoContainer}>
-                <View style={styles.row}>
-                    <Text style={styles.option}>Username: {user.username}</Text>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => setEditingField("username")}
-                    >
-                        <Text style={styles.buttonText}>Change</Text>
-                    </TouchableOpacity>
-                </View>
-                {editingField === "username" && (
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            value={newData}
-                            onChangeText={setNewData}
-                            placeholder="Enter new username"
-                        />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => handleChangeData("username")}
-                        >
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-                <View style={styles.row}>
-                    <Text style={styles.option}>Email: {user.email}</Text>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => setEditingField("email")}
-                    >
-                        <Text style={styles.buttonText}>Change</Text>
-                    </TouchableOpacity>
-                </View>
-                {editingField === "email" && (
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            value={newData}
-                            onChangeText={setNewData}
-                            placeholder="Enter new email"
-                        />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => handleChangeData("email")}
-                        >
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-                <View style={styles.row}>
-                    <Text style={styles.option}>
-                        Password: {showPassword ? user.password : "********"}
+        <View className="flex-1 items-center justify-center">
+            <View className="mb-5 items-center">
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() =>
+                        colorScheme === "dark"
+                            ? Appearance.setColorScheme("light")
+                            : Appearance.setColorScheme("dark")
+                    }
+                >
+                    <Text lightColor="white" className="font-bold">
+                        {colorScheme === "dark" ? "Light Mode" : "Dark Mode"}
                     </Text>
+                </TouchableOpacity>
+            </View>
+            <View className="my-2 flex-row items-center">
+                <Text className="mr-3 text-base">Language: English</Text>
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() => alert("Change language")}
+                >
+                    <Text lightColor="white" className="font-bold">
+                        Change Language
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            <View className="my-2 flex-row items-center">
+                <Text className="mr-3 text-base">
+                    Username: {user.username}
+                </Text>
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() => setEditingField("username")}
+                >
+                    <Text lightColor="white" className="font-bold">
+                        Change
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            {editingField === "username" && (
+                <View className="mt-3 flex-row items-center">
+                    <TextInput
+                        className="mr-3 h-10 w-3/5 border-x-2 border-gray-500 px-3"
+                        value={newData}
+                        onChangeText={setNewData}
+                        placeholder="Enter new username"
+                    />
                     <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => setShowPassword(!showPassword)}
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => handleChangeData("username")}
                     >
-                        <Text style={styles.buttonText}>
-                            {showPassword ? "Hide" : "Show"}
+                        <Text lightColor="white" className="font-bold">
+                            Save
                         </Text>
                     </TouchableOpacity>
+                </View>
+            )}
+            <View className="my-2 flex-row items-center">
+                <Text className="mr-3 text-base">Email: {user.email}</Text>
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() => setEditingField("email")}
+                >
+                    <Text lightColor="white" className="font-bold">
+                        Change
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            {editingField === "email" && (
+                <View className="mt-3 flex-row items-center">
+                    <TextInput
+                        className="mr-3 h-10 w-3/5 border-x-2 border-gray-500 px-3"
+                        value={newData}
+                        onChangeText={setNewData}
+                        placeholder="Enter new email"
+                    />
                     <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => setEditingField("password")}
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => handleChangeData("email")}
                     >
-                        <Text style={styles.buttonText}>Change</Text>
+                        <Text lightColor="white" className="font-bold">
+                            Save
+                        </Text>
                     </TouchableOpacity>
                 </View>
-                {editingField === "password" && (
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            value={newData}
-                            onChangeText={setNewData}
-                            placeholder="Enter new password"
-                        />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => handleChangeData("password")}
-                        >
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+            )}
+            <View className="my-2 flex-row items-center">
+                <Text className="mr-3 text-base">
+                    Password: {showPassword ? user.password : "********"}
+                </Text>
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() => setShowPassword(!showPassword)}
+                >
+                    <Text lightColor="white" className="font-bold">
+                        {showPassword ? "Hide" : "Show"}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() => setEditingField("password")}
+                >
+                    <Text lightColor="white" className="font-bold">
+                        Change
+                    </Text>
+                </TouchableOpacity>
             </View>
+            {editingField === "password" && (
+                <View className="mt-3 flex-row items-center">
+                    <TextInput
+                        className="mr-3 h-10 w-3/5 border-x-2 border-gray-500 px-3"
+                        value={newData}
+                        onChangeText={setNewData}
+                        placeholder="Enter new password"
+                    />
+                    <TouchableOpacity
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => handleChangeData("password")}
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            Save
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             <TouchableOpacity
-                className="bg-pink-700"
-                style={styles.deconnexionButton}
+                className="mt-5 rounded-lg bg-pink-700 p-3"
                 onPress={handleDeleteAccount}
             >
-                <Text style={styles.deleteButtonText}>Deconnexion Account</Text>
+                <Text lightColor="white" className="font-bold">
+                    Deconnexion Account
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={styles.deleteButton}
+                className="mt-5 rounded-md bg-red-500 p-3"
                 onPress={handleDeleteAccount}
             >
-                <Text style={styles.deleteButtonText}>Delete Account</Text>
+                <Text lightColor="white" className="font-bold">
+                    Delete Account
+                </Text>
             </TouchableOpacity>
 
             <Modal
@@ -143,23 +191,27 @@ export default function SettingsScreen() {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>
+                <View className="flex-1 items-center justify-center bg-red-700">
+                    <View className="m-5 items-center rounded-3xl bg-blue-600 p-9">
+                        <Text className="mb-4 text-center">
                             Are you sure you want to delete your account?
                         </Text>
-                        <View style={styles.modalButtons}>
+                        <View className="w-full flex-row justify-between">
                             <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
+                                className="ml-3 rounded-lg bg-gray-500 p-2"
                                 onPress={() => setModalVisible(false)}
                             >
-                                <Text style={styles.buttonText}>Cancel</Text>
+                                <Text lightColor="white" className="font-bold">
+                                    Cancel
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.button, styles.buttonDelete]}
+                                className="ml-3 rounded-lg bg-red-500 p-2"
                                 onPress={confirmDeleteAccount}
                             >
-                                <Text style={styles.buttonText}>Delete</Text>
+                                <Text lightColor="white" className="font-bold">
+                                    Delete
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -168,98 +220,3 @@ export default function SettingsScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    infoContainer: {
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    row: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginVertical: 5,
-    },
-    option: {
-        fontSize: 16,
-        marginRight: 10,
-    },
-    button: {
-        backgroundColor: "blue",
-        padding: 5,
-        borderRadius: 5,
-        marginLeft: 10,
-    },
-    buttonText: {
-        color: "white",
-        fontWeight: "bold",
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 10,
-    },
-    input: {
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        width: "70%",
-        marginRight: 10,
-    },
-    deconnexionButton: {
-        marginTop: 20,
-        padding: 10,
-        borderRadius: 5,
-    },
-    deleteButton: {
-        marginTop: 20,
-        backgroundColor: "red",
-        padding: 10,
-        borderRadius: 5,
-    },
-    deleteButtonText: {
-        color: "white",
-        fontWeight: "bold",
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.9)",
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: "center",
-    },
-    modalButtons: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: "100%",
-    },
-    buttonClose: {
-        backgroundColor: "gray",
-    },
-    buttonDelete: {
-        backgroundColor: "red",
-    },
-});

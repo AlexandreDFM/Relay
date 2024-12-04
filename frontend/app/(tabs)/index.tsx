@@ -78,7 +78,7 @@ export default function HomeScreen() {
                     (chat, index) =>
                         chat.isConnected && (
                             <View
-                                key={index}
+                                key={"Player connected number " + index}
                                 className="ml-4 flex-row items-center p-2"
                             >
                                 <Image
@@ -97,7 +97,7 @@ export default function HomeScreen() {
                     (chat, index) =>
                         !chat.isConnected && (
                             <View
-                                key={index}
+                                key={"Player not connected number " + index}
                                 className="ml-4 flex-row items-center p-2"
                             >
                                 <Image

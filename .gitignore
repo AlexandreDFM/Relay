@@ -3,11 +3,13 @@
 /CMakeCache.txt
 /cmake_install.cmake
 */cmake-*
+cmake*
 /Makefile
 /*.ninja
 
 # Build output (you can adjust for your specific output directory)
 # This assumes the build directory is named 'build'
+*/build/
 /build/
 /bin/
 /lib/
@@ -23,7 +25,7 @@
 
 # IDE directories and files (e.g., for Visual Studio, JetBrains, etc.)
 .vscode/
-.idea/
+*.idea/
 *.vs/
 *.vscode/
 

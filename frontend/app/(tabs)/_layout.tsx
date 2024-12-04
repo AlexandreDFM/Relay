@@ -35,23 +35,44 @@ export default function TabLayout() {
                         <TabBarIcon name="home" color={color} />
                     ),
                     headerRight: () => (
-                        <Link href="/modal" asChild>
-                            <Pressable>
-                                {({ pressed }) => (
-                                    <FontAwesome
-                                        name="info-circle"
-                                        size={25}
-                                        color={
-                                            Colors[colorScheme ?? "light"].text
-                                        }
-                                        style={{
-                                            marginRight: 15,
-                                            opacity: pressed ? 0.5 : 1,
-                                        }}
-                                    />
-                                )}
-                            </Pressable>
-                        </Link>
+                        <div className="flex flex-row">
+                            <Link href="/notifications-modal" asChild>
+                                <Pressable>
+                                    {({ pressed }) => (
+                                        <FontAwesome
+                                            name="bell"
+                                            size={25}
+                                            color={
+                                                Colors[colorScheme ?? "light"]
+                                                    .text
+                                            }
+                                            style={{
+                                                marginRight: 15,
+                                                opacity: pressed ? 0.5 : 1,
+                                            }}
+                                        />
+                                    )}
+                                </Pressable>
+                            </Link>
+                            <Link href="/help-modal" asChild>
+                                <Pressable>
+                                    {({ pressed }) => (
+                                        <FontAwesome
+                                            name="question"
+                                            size={25}
+                                            color={
+                                                Colors[colorScheme ?? "light"]
+                                                    .text
+                                            }
+                                            style={{
+                                                marginRight: 15,
+                                                opacity: pressed ? 0.5 : 1,
+                                            }}
+                                        />
+                                    )}
+                                </Pressable>
+                            </Link>
+                        </div>
                     ),
                 }}
             />
@@ -59,27 +80,9 @@ export default function TabLayout() {
                 name="chats"
                 options={{
                     title: "Chat",
+                    headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="comment" color={color} />
-                    ),
-                    headerRight: () => (
-                        <Link href="/modal" asChild>
-                            <Pressable>
-                                {({ pressed }) => (
-                                    <FontAwesome
-                                        name="info-circle"
-                                        size={25}
-                                        color={
-                                            Colors[colorScheme ?? "light"].text
-                                        }
-                                        style={{
-                                            marginRight: 15,
-                                            opacity: pressed ? 0.5 : 1,
-                                        }}
-                                    />
-                                )}
-                            </Pressable>
-                        </Link>
                     ),
                 }}
             />
@@ -87,6 +90,7 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: "Profile",
+                    headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="user" color={color} />
                     ),
@@ -96,6 +100,7 @@ export default function TabLayout() {
                 name="settings"
                 options={{
                     title: "Settings",
+                    headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="cogs" color={color} />
                     ),

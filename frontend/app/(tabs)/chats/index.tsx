@@ -79,13 +79,16 @@ export default function ChatsScreen() {
             {chats &&
                 chats.map((chat) => (
                     <TouchableOpacity
-                        key={chat.id}
+                        key={"Touchable Message Chat Number " + chat.id}
                         onPress={() => handlePress(chat.id)}
                         activeOpacity={0.7}
                     >
-                        <View key={chat.id} className="w-full">
+                        <View
+                            key={"View Message Chat Number " + chat.id}
+                            className="w-full"
+                        >
                             <View
-                                key={chat.id}
+                                key={"View View Message Chat Number " + chat.id}
                                 className="w-full flex-row p-4 align-middle"
                             >
                                 <Image
@@ -106,7 +109,7 @@ export default function ChatsScreen() {
                             </View>
                             <View
                                 className="my-1 h-1 w-full"
-                                key={chat.id}
+                                key={"Nessage Chat separator number " + chat.id}
                                 lightColor="#eee"
                                 darkColor="rgba(255,255,255,0.1)"
                             />

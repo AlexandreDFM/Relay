@@ -84,35 +84,26 @@ export default function LoginScreen() {
     }, []);
 
     return (
-        <View style={styles.container}>
-            {/* <MasuraoTitle /> */}
-            <View style={styles.separator} />
+        <View className="flex-1 justify-center align-middle">
+            <View className="m-16 h-1 w-4/5" />
             <TextInput
-                style={{
-                    ...styles.text_input,
-                }}
+                className="w-56"
                 placeholder="Email."
                 onChangeText={(email) => setEmail(email)}
                 defaultValue={email}
             />
-            <View style={styles.separator} />
+            <View className="m-16 h-1 w-4/5" />
             <TextInput
-                style={{
-                    ...styles.text_input,
-                }}
+                className="w-56"
                 placeholder="Password."
                 secureTextEntry={true}
                 onChangeText={(password) => setPassword(password)}
                 defaultValue={password}
             />
-            <View style={styles.separator} />
+            <View className="m-16 h-1 w-4/5" />
             <Button onPress={login} title="Login" />
-            <View style={styles.separator} />
-            <Text
-                style={{
-                    ...styles.no_account,
-                }}
-            >
+            <View className="m-16 h-1 w-4/5" />
+            <Text className="mt-5 h-8">
                 Don't have an account ?
                 <TouchableOpacity
                     className="ml-2"
@@ -128,38 +119,3 @@ export default function LoginScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    separator: {
-        margin: 33 / 2,
-        height: 1,
-        width: "80%",
-    },
-    title: {
-        fontFamily: "Roboto",
-        fontSize: 20,
-        fontWeight: "bold",
-        margin: 30,
-    },
-    text_input: {
-        width: 210,
-    },
-    no_account: {
-        marginTop: 20,
-        height: 30,
-    },
-    login_btn: {
-        width: "80%",
-        borderRadius: 25,
-        height: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        margin: 30,
-        backgroundColor: "white",
-    },
-});

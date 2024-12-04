@@ -7,28 +7,40 @@ import { Text, View } from "@/components/Themed";
 import { UserAuth } from "@/types/IUserAuth";
 
 export default function ChatPage() {
-    // const router = useExpoRouter();
-    // const { id } = router.query;
-    const [messages, setMessages] = useState<string[]>([]);
     const [input, setInput] = useState<string>("");
-    // const socket = io("http://localhost:3000");
+    const [serverMessage, setServerMessage] = useState("");
+    const [messages, setMessages] = useState<string[]>([]);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
 
-    // useEffect(() => {
-    //     socket.on("message", (message: string) => {
-    //         setMessages((prevMessages) => [...prevMessages, message]);
-    //     });
+    useEffect(() => {
+        const ws = new WebSocket("ws://127.0.0.1:8080", "echo-protocol");
 
-    //     return () => {
-    //         socket.disconnect();
-    //     };
-    // }, []);
+        ws.onopen = () => {
+            console.log("WebSocket connection opened");
+            ws.send("0 Bob pass");
+            setIsConnected(true); // Update state to reflect successful connection
+        };
 
-    // const sendMessage = () => {
-    //     if (input.trim()) {
-    //         socket.emit("message", input);
-    //         setInput("");
-    //     }
-    // };
+        ws.onmessage = (e) => {
+            console.log("Message from server:", e.data);
+            setServerMessage(e?.data); // Store the server message
+        };
+
+        ws.onerror = (e) => {
+            console.log("WebSocket error:", e);
+            setIsConnected(false); // Update state if there is an error
+        };
+
+        ws.onclose = (e) => {
+            console.log("WebSocket connection closed:", e.code, e.reason);
+            setIsConnected(false); // Update state if the connection closes
+        };
+
+        // Clean up WebSocket connection when the component unmounts
+        return () => {
+            ws.close();
+        };
+    }, []);
 
     const users: User[] = [
         {
@@ -74,6 +86,22 @@ export default function ChatPage() {
 
     return (
         <View className="flex-1">
+            <View className="flex-row p-4 align-middle">
+                <Text style={{ color: "white" }}>
+                    {isConnected
+                        ? "Connected to WebSocket"
+                        : "Not connected to WebSocket"}
+                </Text>
+                {serverMessage ? (
+                    <Text style={{ color: "green" }}>
+                        Server: {serverMessage}
+                    </Text>
+                ) : (
+                    <Text style={{ color: "gray" }}>
+                        No message from server yet
+                    </Text>
+                )}
+            </View>
             <View className="flex-1 p-4">
                 {chat.map((message) => {
                     const user = users.find((u) => u.id === message.userId);
@@ -82,11 +110,11 @@ export default function ChatPage() {
 
                     return message.userId === MyUser.id ? (
                         <View
-                            key={message.id}
+                            key={"Message Received View" + message.id}
                             className="w-full flex-row p-4 align-middle"
                         >
                             <div
-                                key={message.id}
+                                key={"Message Received Div" + message.id}
                                 className="flex w-1/2 flex-row rounded-lg bg-gray-500 p-4 align-middle"
                             >
                                 <Image
@@ -103,11 +131,11 @@ export default function ChatPage() {
                         </View>
                     ) : (
                         <View
-                            key={message.id}
+                            key={"Message Sended View" + message.id}
                             className="w-full flex-row p-4 align-middle"
                         >
                             <div
-                                key={message.id}
+                                key={"Message Sended Div" + message.id}
                                 className="ml-auto w-1/2 flex-row justify-end rounded-lg bg-blue-700 p-4 align-middle"
                             >
                                 <div className="flex">
