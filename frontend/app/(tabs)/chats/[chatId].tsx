@@ -1,10 +1,9 @@
-// import { io } from "socket.io-client";
 import { User } from "@/types/IUser";
-import { Button, Image, TextInput } from "react-native";
 import { Message } from "@/types/IMessage";
 import { useState, useEffect } from "react";
-import { Text, View } from "@/components/Themed";
 import { UserAuth } from "@/types/IUserAuth";
+import { Text, View } from "@/components/Themed";
+import { Button, Image, TextInput } from "react-native";
 
 export default function ChatPage() {
     const [input, setInput] = useState<string>("");
@@ -13,11 +12,10 @@ export default function ChatPage() {
     const [isConnected, setIsConnected] = useState<boolean>(false);
 
     useEffect(() => {
-        const ws = new WebSocket("ws://127.0.0.1:8080", "echo-protocol");
+        const ws = new WebSocket("ws://127.0.0.1:8080");
 
         ws.onopen = () => {
-            console.log("WebSocket connection opened");
-            ws.send("0 Bob pass");
+            ws.send("0\rBob\rpass");
             setIsConnected(true); // Update state to reflect successful connection
         };
 
