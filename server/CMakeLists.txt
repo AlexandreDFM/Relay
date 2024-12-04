@@ -44,7 +44,7 @@ if (NOT Boost_FOUND)
     if (Boost_ADDED)
         message(STATUS "Boost downloaded and configured via CPM: ${Boost_INCLUDE_DIRS}")
     else()
-        message(FATAL_ERROR "Failed to download Boost using CPM.")
+        message(FATAL_ERROR "Failed to download Boost using CPM. Maybe it was already found.")
     endif()
 else()
     # If Boost is found, include directories and libraries
@@ -54,12 +54,17 @@ endif()
 # Add the Boost include directories
 #include_directories(${Boost_INCLUDE_DIRS})
 
-# Add the executable from the source files in the src directory
 file(GLOB_RECURSE SOURCES
-        ${CMAKE_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_SOURCE_DIR}/includes/*.h
-        ${CMAKE_SOURCE_DIR}/includes/*.hpp
+    ./src/*.cpp
+    ./includes/*.h
+    ./includes/*.hpp
 )
+
+# Include directories
+include_directories(./includes)
+
+# Print the sources
+message(STATUS "Sources: ${SOURCES}")
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})

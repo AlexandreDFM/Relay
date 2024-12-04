@@ -1,10 +1,10 @@
 #include "Database.hpp"
+#include <ctime>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <stdexcept>
 #include <algorithm>
-#include <ctime>
-#include <iostream>
 
 namespace json = boost::json;
 
