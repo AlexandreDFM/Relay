@@ -1,8 +1,9 @@
 #pragma once
 
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <mutex>
+#include <filesystem>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 class JsonFile {
 public:
@@ -11,10 +12,10 @@ public:
 
     // should always lock the mutex before upadting the json file
     void update_json_file();
-    std::mutex _JsonMutex;
 
     std::string _path;
+    std::mutex _JsonMutex;
 
-private:
-    boost::property_tree::ptree _json;
+    private:
+        boost::property_tree::ptree _json;
 };

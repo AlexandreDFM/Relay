@@ -6,20 +6,32 @@ JsonFile::JsonFile(std::string path)
     _path = path;
 
     try {
-        // Read the JSON file into the property tree
+        if (!std::filesystem::exists(path)) {
+            std::cerr << "File does not exist: " << path << std::endl;
+            // Print current working directory
+            std::cerr << "Current working directory: " << std::filesystem::current_path() << std::endl;
+            return;
+        }
         boost::property_tree::read_json(path, _json);
-
-    } catch (const boost::property_tree::json_parser::json_parser_error& e) {
-        std::cerr << "Error reading JSON file: " << e.what() << std::endl;
+    } catch (const boost::property_tree::json_parser_error& e) {
+        std::cerr << "Error reading JSON file at path: " << path
+                  << "\nReason: " << e.what() << std::endl;
     }
 }
 
 boost::property_tree::ptree& JsonFile::getJson()
 {
+    std::lock_guard<std::mutex> lock(_JsonMutex);
     return _json;
 }
 
 void JsonFile::update_json_file()
 {
-    boost::property_tree::write_json(_path, _json);
+    std::lock_guard<std::mutex> lock(_JsonMutex);
+    try {
+        boost::property_tree::write_json(_path, _json);
+    } catch (const boost::property_tree::json_parser_error& e) {
+        std::cerr << "Error writing JSON file at path: " << _path
+                  << "\nReason: " << e.what() << std::endl;
+    }
 }

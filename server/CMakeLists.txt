@@ -28,7 +28,7 @@ if (NOT Boost_FOUND)
     include(${CMAKE_BINARY_DIR}/_cpm/CPM.cmake)
 
     # Set the location of the CPM package cache
-    set(CPM_SOURCE_CACHE ${CMAKE_CURRENT_SOURCE_DIR}/CPM_PACKAGE_CACHE CACHE STRING "Location of CPM packages")
+    set(CPM_SOURCE_CACHE ${CMAKE_BINARY_DIR}/CPM_PACKAGE_CACHE CACHE STRING "Location of CPM packages")
 
     # Specify Boost version and download using CPM
     set(BOOST_VERSION 1.84.0)
@@ -71,7 +71,17 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Add Boost include directories and libraries after the target is created
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast ws2_32 Mswsock pthread)
+    # Add symlink to ./Database in the build directory
+    message(STATUS "Source directory for symlink: ${CMAKE_SOURCE_DIR}/server/Database")
+    message(STATUS "Target directory for symlink: $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database")
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/server/Database
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
+    )
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast ws2_32 Mswsock)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast pthread)
 endif()
