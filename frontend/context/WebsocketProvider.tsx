@@ -36,11 +36,6 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
         const handleMessage = (event: MessageEvent) => {
             const message = event.data;
             console.log("Received message:", message);
-            if (isConnected === false && event.data === "9999CONNECTED") {
-                console.log("Connected to WebSocket server");
-                setIsConnected(true);
-            }
-
             listeners.forEach((listener) => listener(message));
         };
 
@@ -48,10 +43,12 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
 
         socket.addEventListener("open", () => {
             console.log("WebSocket connection established.");
+            setIsConnected(true);
         });
 
         socket.addEventListener("close", () => {
             console.log("WebSocket connection closed.");
+            setIsConnected(false);
         });
 
         socket.addEventListener("error", (error) => {
@@ -61,6 +58,7 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
         return () => {
             socket.removeEventListener("message", handleMessage);
             socket.close();
+            setIsConnected(false);
         };
     }, [listeners]);
 

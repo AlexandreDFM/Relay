@@ -57,12 +57,6 @@ void Server::handleNewClient(tcp::socket socket)
             _listClient[remote_endpoint] = std::make_shared<Client>(remote_endpoint, ws, _UserJson, _ChatsJson, _ServerJson, _ListChatJson);
         }
 
-        // Send a welcome message to the client
-        _listClient[remote_endpoint]->send_message("9999CONNECTED");
-
-        // Log the message to the console
-        std::cout << "Sent 9999CONNECTED ; the welcome message to " << remote_endpoint << std::endl;
-
         // Buffer for reading WebSocket messages
         boost::beast::flat_buffer buffer;
 
