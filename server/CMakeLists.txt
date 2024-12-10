@@ -69,18 +69,18 @@ message(STATUS "Sources: ${SOURCES}")
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Add Boost include directories and libraries after the target is created
-if (WIN32)
-    # Add symlink to ./Database in the build directory
-    message(STATUS "Source directory for symlink: ${CMAKE_SOURCE_DIR}/server/Database")
-    message(STATUS "Target directory for symlink: $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database")
+# Add symlink to ./Database in the build directory
+message(STATUS "Source directory for symlink: ${CMAKE_SOURCE_DIR}/server/Database")
+message(STATUS "Target directory for symlink: $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database")
 
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/server/Database
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
-    )
+)
 
+# Add Boost include directories and libraries after the target is created
+if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast ws2_32 Mswsock)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast pthread)
