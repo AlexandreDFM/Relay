@@ -11,6 +11,7 @@ type User = {
 type AuthType = {
     user: User | null;
     setUser: (user: User | null) => void;
+    clearUser: () => void;
 };
 
 const AuthContext = createContext<AuthType>({
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthType>({
         accessToken: "",
     },
     setUser: () => {},
+    clearUser: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -70,6 +72,7 @@ export function AuthProvider({
     const authContext: AuthType = {
         user,
         setUser,
+        clearUser: () => setUser(null),
     };
 
     return (
