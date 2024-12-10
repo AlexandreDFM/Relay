@@ -29,7 +29,6 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
     const [isConnected, setIsConnected] = useState(false);
     const [listeners, setListeners] = useState(new Map());
 
-    // Connect WebSocket
     useEffect(() => {
         const socket = new WebSocket("ws://127.0.0.1:8080");
         setWs(socket);
@@ -42,7 +41,6 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
                 setIsConnected(true);
             }
 
-            // Notify listeners about the response
             listeners.forEach((listener) => listener(message));
         };
 
@@ -66,7 +64,6 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
         };
     }, [listeners]);
 
-    // Send message and handle response
     const sendMessage = useCallback(
         (message: string): Promise<string> => {
             if (!ws || ws.readyState !== WebSocket.OPEN) {
@@ -75,18 +72,14 @@ export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
 
             return new Promise((resolve) => {
                 const handleResponse = (response: string) => {
-                    // Resolve the promise with the response
                     resolve(response);
                 };
 
-                // Add temporary listener
                 const listenerId = Symbol("listener");
                 listeners.set(listenerId, handleResponse);
 
-                // Send the message
                 ws.send(message);
 
-                // Clean up listener after response
                 const cleanup = () => listeners.delete(listenerId);
                 return cleanup;
             });
