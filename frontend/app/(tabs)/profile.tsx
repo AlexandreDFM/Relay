@@ -1,12 +1,9 @@
-import { Image, StyleSheet } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
-import { UserAuth } from "@/types/IUserAuth";
+import { Image } from "react-native";
 import { useEffect, useState } from "react";
+import { UserAuth } from "@/types/IUserAuth";
 import { useAuth } from "@/context/AuthProvider";
+import { Text, View } from "@/components/Themed";
 import { useLocalSearchParams } from "expo-router";
-import { useUserID } from "@/hook/useUser";
 
 export default function ProfileScreen() {
     const [userProfile, setUserProfile] = useState<UserAuth>({
