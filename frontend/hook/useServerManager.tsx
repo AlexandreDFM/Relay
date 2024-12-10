@@ -48,6 +48,7 @@ interface UseServerManager {
         name: string,
         password: Password,
     ) => Promise<WebSocketResponse>;
+    getClientList: () => Promise<string[]>;
     createServer: (server_name: ServerName) => Promise<WebSocketResponse>;
     createServerChat: (
         id_server: ServerId,
@@ -127,6 +128,18 @@ const useServerManager = (): UseServerManager => {
         },
         [handleRequest],
     );
+
+    const getClientList = useCallback(async (): Promise<string[]> => {
+        const response = await handleRequest("5");
+        if (response.startsWith("200")) {
+            const clients = response.split("/").slice(1);
+            console.log("Clients fetched:", clients);
+            return clients;
+        } else {
+            console.error("Error fetching clients:", response);
+            return [];
+        }
+    }, [handleRequest]);
 
     const createServer = useCallback(
         async (server_name: ServerName): Promise<WebSocketResponse> => {
@@ -261,6 +274,7 @@ const useServerManager = (): UseServerManager => {
         connectClient,
         disconnectClient,
         addNewClient,
+        getClientList,
         createServer,
         createServerChat,
         sendMessageOnServer,
