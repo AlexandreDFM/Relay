@@ -6,6 +6,7 @@ import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useWebSocket } from "@/context/WebsocketProvider";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -17,6 +18,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
+    const { isConnected } = useWebSocket();
 
     return (
         <Tabs
@@ -92,7 +94,12 @@ export default function TabLayout() {
                     title: "Profile",
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <TabBarIcon name="user" color={color} />
+                        <>
+                            <TabBarIcon name="user" color={color} />
+                            <div
+                                className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-black ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+                            />
+                        </>
                     ),
                 }}
             />

@@ -13,6 +13,7 @@ import * as SplashScreen from "expo-splash-screen";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { AuthProvider } from "@/context/AuthProvider";
 import { useColorScheme } from "@/components/useColorScheme";
+import { WebSocketProvider } from "@/context/WebsocketProvider";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -58,22 +59,24 @@ function RootLayoutNav() {
         <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-            <AuthProvider>
-                <Stack>
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="modal"
-                        options={{ presentation: "modal" }}
-                    />
-                    <Stack.Screen
-                        name="(auth)/login"
-                        options={{ headerShown: false }}
-                    />
-                </Stack>
-            </AuthProvider>
+            <WebSocketProvider>
+                <AuthProvider>
+                    <Stack>
+                        <Stack.Screen
+                            name="(tabs)"
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="modal"
+                            options={{ presentation: "modal" }}
+                        />
+                        <Stack.Screen
+                            name="(auth)/login"
+                            options={{ headerShown: false }}
+                        />
+                    </Stack>
+                </AuthProvider>
+            </WebSocketProvider>
         </ThemeProvider>
     );
 }
