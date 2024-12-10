@@ -22,17 +22,17 @@ export default function LoginScreen() {
     const [password, setPassword] = useState("pass");
     const { connectClient } = useServerManager();
 
-    const user: UserAuth = {
-        id: "0",
-        name: "HyunChul Joe",
-        imageUri:
-            "https://lh3.googleusercontent.com/55OB_phWrUDH6ThZuNxCfwLham4Zwzr1UelbkjKmdB4NCtLc9Itzm7fayKiqAfqolhzARpB83VrLQNWAT-CGCyyPLy7APpeXYI9dCK4XfJA=w1280",
-        status: "Funniest professor of Keimyung",
-        email: "joh@kmu.ac.kr",
-        password: "MyPasswordIsReallyStrong",
-        createdAt: "2021-09-15T12:48:00.000Z",
-        updatedAt: "2021-09-15T12:48:00.000Z",
-    };
+    // const user: UserAuth = {
+    //     id: "0",
+    //     name: "HyunChul Joe",
+    //     imageUri:
+    //         "https://lh3.googleusercontent.com/55OB_phWrUDH6ThZuNxCfwLham4Zwzr1UelbkjKmdB4NCtLc9Itzm7fayKiqAfqolhzARpB83VrLQNWAT-CGCyyPLy7APpeXYI9dCK4XfJA=w1280",
+    //     status: "Funniest professor of Keimyung",
+    //     email: "joh@kmu.ac.kr",
+    //     password: "MyPasswordIsReallyStrong",
+    //     createdAt: "2021-09-15T12:48:00.000Z",
+    //     updatedAt: "2021-09-15T12:48:00.000Z",
+    // };
 
     const login = async () => {
         console.log("Login button pressed");
@@ -46,8 +46,8 @@ export default function LoginScreen() {
                 // name: user.name,
                 // imageUri: user.imageUri,
                 // status: user.status,
-                email: user.email,
-                password: user.password,
+                email: email,
+                password: password,
                 accessToken: response,
                 // createdAt: user.createdAt,
                 // updatedAt: user.updatedAt,
@@ -107,7 +107,7 @@ export default function LoginScreen() {
                         // router.push(`/register/`);
                     }}
                 >
-                    Sign up
+                    <Text>Sign up</Text>
                 </TouchableOpacity>
             </Text>
             {/* Use a light status bar on iOS to account for the black space above the modal */}

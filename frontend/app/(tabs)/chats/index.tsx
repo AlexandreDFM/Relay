@@ -1,8 +1,7 @@
 import { useRouter } from "expo-router";
 import { UserChat } from "@/types/IUserChat";
 import { Text, View } from "@/components/Themed";
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 
 export default function ChatsScreen() {
     const router = useRouter();
@@ -57,7 +56,7 @@ export default function ChatsScreen() {
             id: "4",
             name: "Bill Gates",
             imageUri:
-                "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/bill_gates.jpg",
+                "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/jeff.jpeg",
             isConnected: false,
             messages: [
                 {
