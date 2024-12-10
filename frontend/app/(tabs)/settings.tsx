@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
+import { useAuth } from "@/context/AuthProvider";
 
 const initialUser = {
     username: "HyunChul Joe",
@@ -20,20 +21,34 @@ type UserField = "username" | "password" | "email";
 export default function SettingsScreen() {
     const colorScheme = useColorScheme();
 
+    const { clearUser } = useAuth();
     const [newData, setNewData] = useState("");
     const [user, setUser] = useState(initialUser);
     const [showPassword, setShowPassword] = useState(false);
     const [editingField, setEditingField] = useState<UserField | null>(null);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibleDelete, setModalVisibleDelete] = useState(false);
+    const [modalVisibleDisconnection, setModalVisibleDisconnection] =
+        useState(false);
+
+    const handleDisconnectionAccount = () => {
+        console.log("Disconnection account");
+        setModalVisibleDisconnection(true);
+    };
+
+    const confirmDisconnectionAccount = () => {
+        console.log("Account disconnection");
+        clearUser();
+        setModalVisibleDisconnection(false);
+    };
 
     const handleDeleteAccount = () => {
         console.log("Delete account");
-        setModalVisible(true);
+        setModalVisibleDelete(true);
     };
 
     const confirmDeleteAccount = () => {
         console.log("Account deleted");
-        setModalVisible(false);
+        setModalVisibleDelete(false);
     };
 
     const handleChangeData = (field: UserField) => {
@@ -170,10 +185,10 @@ export default function SettingsScreen() {
             )}
             <TouchableOpacity
                 className="mt-5 rounded-lg bg-pink-700 p-3"
-                onPress={handleDeleteAccount}
+                onPress={handleDisconnectionAccount}
             >
                 <Text lightColor="white" className="font-bold">
-                    Deconnexion Account
+                    Disconnection Account
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -188,8 +203,43 @@ export default function SettingsScreen() {
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                visible={modalVisibleDisconnection}
+                onRequestClose={() => setModalVisibleDisconnection(false)}
+            >
+                <View className="flex-1 items-center justify-center bg-red-700">
+                    <View className="m-5 items-center rounded-3xl bg-blue-600 p-9">
+                        <Text className="mb-4 text-center">
+                            Are you sure you want to disconnection your account?
+                        </Text>
+                        <View className="w-full flex-row justify-between">
+                            <TouchableOpacity
+                                className="ml-3 rounded-lg bg-gray-500 p-2"
+                                onPress={() =>
+                                    setModalVisibleDisconnection(false)
+                                }
+                            >
+                                <Text lightColor="white" className="font-bold">
+                                    Cancel
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="ml-3 rounded-lg bg-red-500 p-2"
+                                onPress={confirmDisconnectionAccount}
+                            >
+                                <Text lightColor="white" className="font-bold">
+                                    Disconnection
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisibleDelete}
+                onRequestClose={() => setModalVisibleDelete(false)}
             >
                 <View className="flex-1 items-center justify-center bg-red-700">
                     <View className="m-5 items-center rounded-3xl bg-blue-600 p-9">
@@ -199,7 +249,7 @@ export default function SettingsScreen() {
                         <View className="w-full flex-row justify-between">
                             <TouchableOpacity
                                 className="ml-3 rounded-lg bg-gray-500 p-2"
-                                onPress={() => setModalVisible(false)}
+                                onPress={() => setModalVisibleDelete(false)}
                             >
                                 <Text lightColor="white" className="font-bold">
                                     Cancel
