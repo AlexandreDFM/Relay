@@ -96,12 +96,23 @@ export default function ChatsScreen() {
                                     className="mr-4 h-12 w-12 rounded-full"
                                 />
                                 <View className="w-full">
-                                    <View className="flex-row pr-20">
+                                    <View className="flex-row pr-16">
                                         <Text className="text-xl font-bold">
                                             {chat.name}
                                         </Text>
                                         <Text className="ml-auto text-sm font-light text-gray-400">
-                                            {chat.messages[0].createdAt}
+                                            {
+                                                // Date and time of the last message
+                                                new Date(
+                                                    chat.messages[0].createdAt,
+                                                ).toLocaleTimeString([], {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })
+                                            }
                                         </Text>
                                     </View>
                                     <Text>{chat.messages[0].content}</Text>
