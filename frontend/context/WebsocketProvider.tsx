@@ -1,71 +1,101 @@
-import { useAuth } from "./AuthProvider";
-import { createContext, useContext, useEffect, useState } from "react";
+import React, {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    useCallback,
+} from "react";
 
 type WebSocketContextType = {
     ws: WebSocket | null;
-    sendMessage: (message: string) => void;
-    serverMessage: string;
     isConnected: boolean;
+    sendMessage: (message: string) => Promise<string>;
 };
 
 const WebSocketContext = createContext<WebSocketContextType>({
     ws: null,
-    sendMessage: () => {},
-    serverMessage: "",
     isConnected: false,
+    sendMessage: async () => {
+        throw new Error("WebSocket is not connected.");
+    },
 });
 
-export const useWebSocket = () => useContext(WebSocketContext);
+export const useWebSocket = () => {
+    return useContext(WebSocketContext);
+};
 
 export const WebSocketProvider = ({ children }: { children: JSX.Element }) => {
-    const { user } = useAuth();
     const [ws, setWs] = useState<WebSocket | null>(null);
-    const [serverMessage, setServerMessage] = useState("");
     const [isConnected, setIsConnected] = useState(false);
+    const [listeners, setListeners] = useState(new Map());
 
+    // Connect WebSocket
     useEffect(() => {
-        if (user) {
-            const socket = new WebSocket("ws://127.0.0.1:8080");
+        const socket = new WebSocket("ws://127.0.0.1:8080");
+        setWs(socket);
 
-            socket.onopen = () => {
-                console.log("WebSocket connection opened");
-                socket.send(`LOGIN ${user.email} ${user.password}`);
+        const handleMessage = (event: MessageEvent) => {
+            const message = event.data;
+            console.log("Received message:", message);
+            if (isConnected === false && event.data === "9999CONNECTED") {
+                console.log("Connected to WebSocket server");
                 setIsConnected(true);
-            };
+            }
 
-            socket.onmessage = (e) => {
-                console.log("Message from server:", e.data);
-                setServerMessage(e.data);
-            };
+            // Notify listeners about the response
+            listeners.forEach((listener) => listener(message));
+        };
 
-            socket.onerror = (e) => {
-                console.log("WebSocket error:", e);
-                setIsConnected(false);
-            };
+        socket.addEventListener("message", handleMessage);
 
-            socket.onclose = (e) => {
-                console.log("WebSocket connection closed:", e.code, e.reason);
-                setIsConnected(false);
-            };
+        socket.addEventListener("open", () => {
+            console.log("WebSocket connection established.");
+        });
 
-            setWs(socket);
+        socket.addEventListener("close", () => {
+            console.log("WebSocket connection closed.");
+        });
 
-            return () => {
-                socket.close();
-            };
-        }
-    }, [user]);
+        socket.addEventListener("error", (error) => {
+            console.error("WebSocket error:", error);
+        });
 
-    const sendMessage = (message: string) => {
-        if (ws && isConnected) {
-            ws.send(message);
-        }
-    };
+        return () => {
+            socket.removeEventListener("message", handleMessage);
+            socket.close();
+        };
+    }, [listeners]);
+
+    // Send message and handle response
+    const sendMessage = useCallback(
+        (message: string): Promise<string> => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                throw new Error("WebSocket is not connected.");
+            }
+
+            return new Promise((resolve) => {
+                const handleResponse = (response: string) => {
+                    // Resolve the promise with the response
+                    resolve(response);
+                };
+
+                // Add temporary listener
+                const listenerId = Symbol("listener");
+                listeners.set(listenerId, handleResponse);
+
+                // Send the message
+                ws.send(message);
+
+                // Clean up listener after response
+                const cleanup = () => listeners.delete(listenerId);
+                return cleanup;
+            });
+        },
+        [ws, listeners],
+    );
 
     return (
-        <WebSocketContext.Provider
-            value={{ ws, sendMessage, serverMessage, isConnected }}
-        >
+        <WebSocketContext.Provider value={{ ws, isConnected, sendMessage }}>
             {children}
         </WebSocketContext.Provider>
     );
