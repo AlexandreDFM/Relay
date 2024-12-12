@@ -1,12 +1,14 @@
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
-
+import { Text } from "react-native";
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { Pressable } from "react-native";
+import { Link, Tabs } from "expo-router";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useWebSocket } from "@/context/WebsocketProvider";
+import { useColorScheme } from "@/components/useColorScheme";
+import relayIcon from "@/assets/images/logos/relay-icon.svg";
+import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { Image } from "react-native";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -35,6 +37,17 @@ export default function TabLayout() {
                     title: "Home",
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="home" color={color} />
+                    ),
+                    headerLeft: () => (
+                        <div className="p-4">
+                            <Image
+                                source={relayIcon}
+                                style={{
+                                    width: 40,
+                                    height: 40,
+                                }}
+                            />
+                        </div>
                     ),
                     headerRight: () => (
                         <div className="flex flex-row">
@@ -107,9 +120,17 @@ export default function TabLayout() {
                 name="settings"
                 options={{
                     title: "Settings",
-                    headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="cogs" color={color} />
+                    ),
+                    header: () => (
+                        <div className="w-full flex-row border-b-4 border-slate-500 bg-transparent p-4">
+                            <div className="flex flex-row justify-center gap-4">
+                                <Text className="text-xl font-bold">
+                                    Settings
+                                </Text>
+                            </div>
+                        </div>
                     ),
                 }}
             />

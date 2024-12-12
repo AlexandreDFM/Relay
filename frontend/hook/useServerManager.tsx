@@ -260,7 +260,20 @@ const useServerManager = (): UseServerManager => {
             const response = await handleRequest(
                 `7\r${id_server}\r${id_channel}\r${nb_messages}`,
             );
-            const messages = response.split("\r");
+            const responseArray = response.split("-");
+            responseArray[0] = responseArray[0].slice(4); // remove the status code from the first element
+
+            const messagesArray = [];
+
+            for (let i = 0; i < responseArray.length; i += 3) {
+                messagesArray.push(responseArray.slice(i, i + 3));
+            }
+
+            // Reverse the array to have the most recent messages first
+            messagesArray.reverse();
+
+            const messages = messagesArray.map((message) => message.join(" "));
+
             console.log(
                 `Fetched messages from server ${id_server}, channel ${id_channel}:`,
                 messages,

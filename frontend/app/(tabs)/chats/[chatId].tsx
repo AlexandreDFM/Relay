@@ -1,150 +1,199 @@
-import { User } from "@/types/IUser";
-import { Message } from "@/types/IMessage";
 import { useState, useEffect } from "react";
-import { UserAuth } from "@/types/IUserAuth";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "@/components/Themed";
-import { Button, Image, TextInput } from "react-native";
+import { useAuth } from "@/context/AuthProvider";
+import { MessageData } from "@/types/IMessageData";
+import { useRoute } from "@react-navigation/native";
+import useServerManager from "@/hook/useServerManager";
+import { useWebSocket } from "@/context/WebsocketProvider";
+import { Button, TextInput, ScrollView, Pressable } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+
+export const unstable_settings = {
+    layout: null, // Bypass the default layout
+};
 
 export default function ChatPage() {
+    const route = useRoute();
+    const { user } = useAuth();
+    const { isLogged } = useAuth();
+    const { isConnected } = useWebSocket();
     const [input, setInput] = useState<string>("");
-    const [serverMessage, setServerMessage] = useState("");
-    const [messages, setMessages] = useState<string[]>([]);
-    const [isConnected, setIsConnected] = useState<boolean>(false);
+    const { chatId } = route.params as { chatId: string };
+    const [messages, setMessages] = useState<MessageData[]>([]);
+    const { getChannelMessages, sendMessageOnServer } = useServerManager();
 
-    const users: User[] = [
-        {
-            id: "1",
-            name: "Mark Zuckerberg",
-            imageUri:
-                "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg",
-        },
-        {
-            id: "2",
-            name: "Elon Musk",
-            imageUri:
-                "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/elon.png",
-        },
-    ];
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const messages = await getChannelMessages(0, parseInt(chatId), 99);
 
-    const chat: Message[] = [
-        {
-            id: "1",
-            userId: "1",
-            content: "How are you doing?",
-            createdAt: "2021-09-15T12:48:00.000Z",
-        },
-        {
-            id: "2",
-            userId: "2",
-            content: "Well and you?",
-            createdAt: "2021-09-15T12:48:00.000Z",
-        },
-    ];
+            const groupMessages = (messages: string[]) => {
+                const groupedMessages: MessageData[] = [];
+                for (let i = 0; i < messages.length; i++) {
+                    const message = messages[i].split("/");
+                    groupedMessages.push({
+                        content: message[0],
+                        date: message[1],
+                        author: message[2],
+                    });
+                }
 
-    const MyUser: UserAuth = {
-        id: "1",
-        name: "Mark Zuckerberg",
-        imageUri:
-            "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg",
-        status: "Hey there! I am using WhatsApp",
-        email: "test@gmail.com",
-        password: "password",
-        createdAt: "2021-09-15T12:48:00.000Z",
-        updatedAt: "2021-09-15T12:48:00.000Z",
+                groupedMessages.sort((a, b) => {
+                    return (
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                    );
+                });
+
+                return groupedMessages;
+            };
+
+            setMessages(groupMessages(messages));
+        };
+
+        fetchMessages();
+    }, [isLogged, isConnected]);
+
+    const sendMessage = async () => {
+        const response = await sendMessageOnServer(0, parseInt(chatId), input);
+        console.log("On send message, Server says : ", response);
+        setInput("");
+
+        // Update messages
+        const fetchMessages = async () => {
+            const messages = await getChannelMessages(0, parseInt(chatId), 99);
+
+            const groupMessages = (messages: string[]) => {
+                const groupedMessages: MessageData[] = [];
+                for (let i = 0; i < messages.length; i++) {
+                    const message = messages[i].split("/");
+                    groupedMessages.push({
+                        content: message[0],
+                        date: message[1],
+                        author: message[2],
+                    });
+                }
+
+                groupedMessages.sort((a, b) => {
+                    return (
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                    );
+                });
+
+                return groupedMessages;
+            };
+
+            setMessages(groupMessages(messages));
+        };
+
+        fetchMessages();
     };
 
     return (
         <View className="flex-1">
-            <View className="flex-row justify-center p-4 text-center align-middle">
-                <Image
-                    source={{ uri: users[0].imageUri }}
-                    className="mr-2 h-12 w-12 rounded-full"
-                />
-                <div className="ml-4 flex flex-col justify-center align-middle">
-                    <Text className="text-xl font-bold">{users[0].name}</Text>
-                </div>
-            </View>
-            <View className="flex-1 p-4">
-                {chat.map((message) => {
-                    const user = users.find((u) => u.id === message.userId);
-
-                    if (!user) return null;
-
-                    return message.userId === MyUser.id ? (
-                        <View
-                            key={"Message Received View" + message.id}
-                            className="w-full flex-row p-4 align-middle"
-                        >
-                            <div
-                                key={"Message Received Div" + message.id}
-                                className="flex w-1/2 flex-row rounded-lg bg-gray-500 p-4 align-middle"
-                            >
-                                <div className="flex w-full flex-col gap-3">
-                                    <Text>{message.content}</Text>
-                                    <div className="flex w-full flex-row justify-end gap-2">
-                                        <Text className="text-right text-xs text-gray-100">
-                                            {new Date(
-                                                message.createdAt,
-                                            ).toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </Text>
-                                        <Ionicons
-                                            name="checkmark-done"
-                                            size={16}
-                                            color="white"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </View>
-                    ) : (
-                        <View
-                            key={"Message Sended View" + message.id}
-                            className="w-full flex-row p-4 align-middle"
-                        >
-                            <div
-                                key={"Message Sended Div" + message.id}
-                                className="ml-auto w-1/2 flex-row justify-end rounded-lg bg-blue-700 p-4 align-middle"
-                            >
-                                <div className="flex w-full flex-col gap-3">
-                                    <Text>{message.content}</Text>
-                                    <div className="flex w-full flex-row justify-end gap-2">
-                                        <Text className="text-right text-xs text-gray-100">
-                                            {
-                                                // Only show hours and minutes
-                                                new Date(
-                                                    message.createdAt,
-                                                ).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })
+            <SafeAreaProvider>
+                <SafeAreaView className="flex-1 pt-2" edges={["top"]}>
+                    <ScrollView>
+                        {messages.length === 0 ? (
+                            <View className="flex-row p-4 align-middle">
+                                <Text>No messages</Text>
+                            </View>
+                        ) : (
+                            messages.map((message, index) => {
+                                return user?.id.toLocaleString() ===
+                                    message.author ? (
+                                    <View
+                                        key={"Message Sended View " + index}
+                                        className="w-full flex-row p-4 align-middle"
+                                    >
+                                        <div
+                                            key={"Message Sended Div " + index}
+                                            className="ml-auto w-1/2 flex-row justify-end rounded-lg bg-blue-700 p-4 align-middle"
+                                        >
+                                            <div className="flex w-full flex-col gap-3">
+                                                <Text>{message.content}</Text>
+                                                <div className="flex w-full flex-row justify-end gap-2">
+                                                    <Text className="text-right text-xs text-gray-100">
+                                                        {new Date(
+                                                            message.date,
+                                                        ).toLocaleTimeString(
+                                                            [],
+                                                            {
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            },
+                                                        )}
+                                                    </Text>
+                                                    <Ionicons
+                                                        name="checkmark-done"
+                                                        size={16}
+                                                        color="white"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </View>
+                                ) : (
+                                    <View
+                                        key={"Message Received View " + index}
+                                        className="w-full flex-row p-4 align-middle"
+                                    >
+                                        <div
+                                            key={
+                                                "Message Received Div " + index
                                             }
-                                        </Text>
-                                        <Ionicons
-                                            name="checkmark-done"
-                                            size={16}
-                                            color="white"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </View>
-                    );
-                })}
-            </View>
-            <div className="flex w-full border-t-2 border-slate-800">
+                                            className="flex w-1/2 flex-row rounded-lg bg-gray-500 p-4 align-middle"
+                                        >
+                                            <div className="flex w-full flex-col gap-3">
+                                                <Text>{message.content}</Text>
+                                                <div className="flex w-full flex-row justify-end gap-2">
+                                                    <Text className="text-right text-xs text-gray-100">
+                                                        {new Date(
+                                                            message.date,
+                                                        ).toLocaleTimeString(
+                                                            [],
+                                                            {
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            },
+                                                        )}
+                                                    </Text>
+                                                    <Ionicons
+                                                        name="checkmark-done"
+                                                        size={16}
+                                                        color="white"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </View>
+                                );
+                            })
+                        )}
+                    </ScrollView>
+                </SafeAreaView>
+            </SafeAreaProvider>
+            <div className="flex w-full border-t-2 border-slate-200">
+                <Pressable className="items-center justify-center rounded-full bg-slate-400 align-middle">
+                    {({ pressed }) => (
+                        <Ionicons
+                            name="attach"
+                            size={24}
+                            style={{
+                                opacity: pressed ? 0.5 : 1,
+                            }}
+                        />
+                    )}
+                </Pressable>
                 <TextInput
                     value={input}
                     onChangeText={(text) => setInput(text)}
                     placeholder="Type a message"
-                    className="flex-1 p-2"
+                    className="w-4 flex-1 rounded-md p-2"
+                    onKeyPress={(e) =>
+                        e.nativeEvent.key === "Enter" && sendMessage()
+                    }
                 />
-                {/* onKeyPress={(e) => e.key === "Enter" && sendMessage()} */}
-                {/* // onClick={sendMessage} */}
-                <Button title="Send" />
+                <Button title="Send" onPress={sendMessage} />
             </div>
         </View>
     );

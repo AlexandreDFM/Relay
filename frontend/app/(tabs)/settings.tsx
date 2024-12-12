@@ -4,11 +4,13 @@ import {
     Modal,
     useColorScheme,
     Appearance,
+    View,
 } from "react-native";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/Themed";
+import { Text } from "@/components/Themed";
 import { useAuth } from "@/context/AuthProvider";
+import { Ionicons } from "@expo/vector-icons";
 
 const initialUser = {
     username: "HyunChul Joe",
@@ -58,36 +60,54 @@ export default function SettingsScreen() {
     };
 
     return (
-        <View className="flex-1 items-center justify-center">
-            <View className="mb-5 items-center">
-                <TouchableOpacity
-                    className="ml-3 rounded-lg bg-blue-500 p-2"
-                    onPress={() =>
-                        colorScheme === "dark"
-                            ? Appearance.setColorScheme("light")
-                            : Appearance.setColorScheme("dark")
-                    }
-                >
-                    <Text lightColor="white" className="font-bold">
-                        {colorScheme === "dark" ? "Light Mode" : "Dark Mode"}
+        <View className="flex-1">
+            <View className="flex h-20 flex-row items-center border-b-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="color-palette" size={24} color="black" />
+                    <Text className="mr-3 text-base">
+                        Color Scheme: {colorScheme}
                     </Text>
-                </TouchableOpacity>
+                </div>
+                <div className="flex-shrink">
+                    <TouchableOpacity
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() =>
+                            colorScheme === "dark"
+                                ? Appearance.setColorScheme("light")
+                                : Appearance.setColorScheme("dark")
+                        }
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            {colorScheme === "dark"
+                                ? "Light Mode"
+                                : "Dark Mode"}
+                        </Text>
+                    </TouchableOpacity>
+                </div>
             </View>
-            <View className="my-2 flex-row items-center">
-                <Text className="mr-3 text-base">Language: English</Text>
-                <TouchableOpacity
-                    className="ml-3 rounded-lg bg-blue-500 p-2"
-                    onPress={() => alert("Change language")}
-                >
-                    <Text lightColor="white" className="font-bold">
-                        Change Language
+            <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="language" size={24} color="black" />
+                    <Text className="mr-3 text-base">Language: English</Text>
+                </div>
+                <div className="flex-shrink">
+                    <TouchableOpacity
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => alert("Change language")}
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            Change Language
+                        </Text>
+                    </TouchableOpacity>
+                </div>
+            </View>
+            <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="person" size={24} color="black" />
+                    <Text className="mr-3 text-base">
+                        Username: {user.username}
                     </Text>
-                </TouchableOpacity>
-            </View>
-            <View className="my-2 flex-row items-center">
-                <Text className="mr-3 text-base">
-                    Username: {user.username}
-                </Text>
+                </div>
                 <TouchableOpacity
                     className="ml-3 rounded-lg bg-blue-500 p-2"
                     onPress={() => setEditingField("username")}
@@ -98,44 +118,57 @@ export default function SettingsScreen() {
                 </TouchableOpacity>
             </View>
             {editingField === "username" && (
-                <View className="mt-3 flex-row items-center">
-                    <TextInput
-                        className="mr-3 h-10 w-3/5 border-x-2 border-gray-500 px-3"
-                        value={newData}
-                        onChangeText={setNewData}
-                        placeholder="Enter new username"
-                    />
-                    <TouchableOpacity
-                        className="ml-3 rounded-lg bg-blue-500 p-2"
-                        onPress={() => handleChangeData("username")}
-                    >
-                        <Text lightColor="white" className="font-bold">
-                            Save
-                        </Text>
-                    </TouchableOpacity>
+                <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                    <div className="flex flex-grow flex-row items-center gap-5">
+                        <TextInput
+                            className="h-10 w-3/5 border-2 border-gray-500 px-3"
+                            value={newData}
+                            onChangeText={setNewData}
+                            placeholder="Enter new username"
+                        />
+                    </div>
+                    <div className="flex-shrink">
+                        <TouchableOpacity
+                            className="ml-3 rounded-lg bg-blue-500 p-2"
+                            onPress={() => handleChangeData("username")}
+                        >
+                            <Text lightColor="white" className="font-bold">
+                                Save
+                            </Text>
+                        </TouchableOpacity>
+                    </div>
                 </View>
             )}
-            <View className="my-2 flex-row items-center">
-                <Text className="mr-3 text-base">Email: {user.email}</Text>
-                <TouchableOpacity
-                    className="ml-3 rounded-lg bg-blue-500 p-2"
-                    onPress={() => setEditingField("email")}
-                >
-                    <Text lightColor="white" className="font-bold">
-                        Change
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            {editingField === "email" && (
-                <View className="mt-3 flex-row items-center">
-                    <TextInput
-                        className="mr-3 h-10 w-3/5 border-x-2 border-gray-500 px-3"
-                        value={newData}
-                        onChangeText={setNewData}
-                        placeholder="Enter new email"
-                    />
+            <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="mail" size={24} color="black" />
+                    <div>
+                        <Text className="text-base">Email: {user.email}</Text>
+                    </div>
+                </div>
+                <div className="flex-shrink">
                     <TouchableOpacity
                         className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => setEditingField("email")}
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            Change
+                        </Text>
+                    </TouchableOpacity>
+                </div>
+            </View>
+            {editingField === "email" && (
+                <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                    <div className="flex flex-grow flex-row items-center gap-5">
+                        <TextInput
+                            className="mr-3 h-10 w-3/5 border-2 border-gray-500 px-3"
+                            value={newData}
+                            onChangeText={setNewData}
+                            placeholder="Enter new email"
+                        />
+                    </div>
+                    <TouchableOpacity
+                        className="mr-auto rounded-lg bg-blue-500 p-2"
                         onPress={() => handleChangeData("email")}
                     >
                         <Text lightColor="white" className="font-bold">
@@ -144,70 +177,81 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </View>
             )}
-            <View className="my-2 flex-row items-center">
-                <Text className="mr-3 text-base">
-                    Password: {showPassword ? user.password : "********"}
-                </Text>
-                <TouchableOpacity
-                    className="ml-3 rounded-lg bg-blue-500 p-2"
-                    onPress={() => setShowPassword(!showPassword)}
-                >
-                    <Text lightColor="white" className="font-bold">
-                        {showPassword ? "Hide" : "Show"}
+            <View className="flex h-20 flex-row border-y-2 border-b-4 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="lock-closed" size={24} color="black" />
+                    <Text className="mr-3 text-base">
+                        Password: {showPassword ? user.password : "********"}
                     </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    className="ml-3 rounded-lg bg-blue-500 p-2"
-                    onPress={() => setEditingField("password")}
-                >
-                    <Text lightColor="white" className="font-bold">
-                        Change
-                    </Text>
-                </TouchableOpacity>
-            </View>
-            {editingField === "password" && (
-                <View className="mt-3 flex-row items-center">
-                    <TextInput
-                        className="mr-3 h-10 w-3/5 border-x-2 border-gray-500 px-3"
-                        value={newData}
-                        onChangeText={setNewData}
-                        placeholder="Enter new password"
-                    />
+                </div>
+                <div className="flex flex-shrink flex-row">
                     <TouchableOpacity
                         className="ml-3 rounded-lg bg-blue-500 p-2"
-                        onPress={() => handleChangeData("password")}
+                        onPress={() => setShowPassword(!showPassword)}
                     >
                         <Text lightColor="white" className="font-bold">
-                            Save
+                            {showPassword ? "Hide" : "Show"}
                         </Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => setEditingField("password")}
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            Change
+                        </Text>
+                    </TouchableOpacity>
+                </div>
+            </View>
+            {editingField === "password" && (
+                <View className="flex h-20 flex-row border-b-4 border-slate-500 p-4">
+                    <div className="flex flex-grow flex-row items-center gap-5">
+                        <TextInput
+                            className="h-10 w-3/5 border-2 border-gray-500 px-3"
+                            value={newData}
+                            onChangeText={setNewData}
+                            placeholder="Enter new password"
+                        />
+                    </div>
+                    <div className="flex-shrink">
+                        <TouchableOpacity
+                            className="ml-3 rounded-lg bg-blue-500 p-2"
+                            onPress={() => handleChangeData("password")}
+                        >
+                            <Text lightColor="white" className="font-bold">
+                                Save
+                            </Text>
+                        </TouchableOpacity>
+                    </div>
                 </View>
             )}
-            <TouchableOpacity
-                className="mt-5 rounded-lg bg-pink-700 p-3"
-                onPress={handleDisconnectionAccount}
-            >
-                <Text lightColor="white" className="font-bold">
-                    Disconnection Account
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                className="mt-5 rounded-md bg-red-500 p-3"
-                onPress={handleDeleteAccount}
-            >
-                <Text lightColor="white" className="font-bold">
-                    Delete Account
-                </Text>
-            </TouchableOpacity>
+            <div className="mb-20 mt-auto flex flex-col gap-3 p-4">
+                <TouchableOpacity
+                    className="border-4 border-slate-500 bg-pink-700 p-4"
+                    onPress={handleDisconnectionAccount}
+                >
+                    <Text lightColor="white" className="text-center font-bold">
+                        Disconnection Account
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="border-4 border-slate-500 bg-red-500 p-4"
+                    onPress={handleDeleteAccount}
+                >
+                    <Text lightColor="white" className="text-center font-bold">
+                        Delete Account
+                    </Text>
+                </TouchableOpacity>
+            </div>
 
             <Modal
-                animationType="slide"
-                transparent={true}
+                animationType="fade"
+                transparent
                 visible={modalVisibleDisconnection}
                 onRequestClose={() => setModalVisibleDisconnection(false)}
             >
-                <View className="flex-1 items-center justify-center bg-red-700">
-                    <View className="m-5 items-center rounded-3xl bg-blue-600 p-9">
+                <View className="flex-1 items-center justify-center align-middle backdrop-blur">
+                    <View className="m-5 items-center rounded-3xl bg-white p-9 shadow-black">
                         <Text className="mb-4 text-center">
                             Are you sure you want to disconnection your account?
                         </Text>
@@ -236,13 +280,13 @@ export default function SettingsScreen() {
             </Modal>
 
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 visible={modalVisibleDelete}
                 onRequestClose={() => setModalVisibleDelete(false)}
             >
-                <View className="flex-1 items-center justify-center bg-red-700">
-                    <View className="m-5 items-center rounded-3xl bg-blue-600 p-9">
+                <View className="flex-1 items-center justify-center align-middle backdrop-blur">
+                    <View className="m-5 items-center rounded-3xl bg-white p-9 shadow-black">
                         <Text className="mb-4 text-center">
                             Are you sure you want to delete your account?
                         </Text>

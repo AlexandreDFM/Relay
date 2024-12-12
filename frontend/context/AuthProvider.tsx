@@ -1,14 +1,9 @@
+import { User } from "@/types/IUser";
 import { useSegments, router } from "expo-router";
 import { useWebSocket } from "./WebsocketProvider";
 import useServerManager from "@/hook/useServerManager";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useState } from "react";
-
-type User = {
-    email: string;
-    password: string;
-    accessToken: any;
-};
 
 type AuthType = {
     user: User | null;
@@ -19,9 +14,14 @@ type AuthType = {
 
 const AuthContext = createContext<AuthType>({
     user: {
+        id: -1,
+        name: "",
+        imageUri: "",
+        status: "",
         email: "",
         password: "",
-        accessToken: "",
+        createdAt: "",
+        updatedAt: "",
     },
     isLogged: false,
     setUser: () => {},
@@ -87,7 +87,6 @@ export function AuthProvider({
                 console.log("Client connected and approved!");
                 setUser({
                     ...user,
-                    accessToken: response,
                 });
                 setIsLogged(true);
             } else {

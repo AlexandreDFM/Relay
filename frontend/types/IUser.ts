@@ -1,5 +1,10 @@
 export interface User {
-    id: string;
+    id: number;
     name: string;
     imageUri: string;
+    status: string;
+    email: string;
+    password: string;
+    createdAt: string;
+    updatedAt: string;
 }

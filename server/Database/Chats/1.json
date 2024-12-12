@@ -10,19 +10,19 @@
         {
             "id": "1",
             "time": "2024-11-18 14:48:31",
-            "data": "HelloBob\r\n",
+            "data": "HelloBob\n",
             "aut": "1"
         },
         {
             "id": "2",
             "time": "2024-11-18 14:53:22",
-            "data": "howareyoubuddy\r\n",
+            "data": "howareyoubuddy\n",
             "aut": "1"
         },
         {
             "id": "3",
             "time": "2024-11-18 14:59:03",
-            "data": "Whythefkareyoutalkinglikethat?\r\n",
+            "data": "Whythefkareyoutalkinglikethat?\n",
             "aut": "0"
         },
         {

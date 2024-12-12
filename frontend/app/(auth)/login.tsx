@@ -6,14 +6,15 @@ import {
     BackHandler,
     useColorScheme,
     TouchableOpacity,
+    Image,
 } from "react-native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { UserAuth } from "@/types/IUserAuth";
 import { View } from "../../components/Themed";
 import { useAuth } from "../../context/AuthProvider";
 import useServerManager from "@/hook/useServerManager";
+import relayLogoFull from "@/assets/images/logos/relay-logo-full.png";
 
 export default function LoginScreen() {
     const { setUser } = useAuth();
@@ -22,35 +23,20 @@ export default function LoginScreen() {
     const [password, setPassword] = useState("pass");
     const { connectClient } = useServerManager();
 
-    // const user: UserAuth = {
-    //     id: "0",
-    //     name: "HyunChul Joe",
-    //     imageUri:
-    //         "https://lh3.googleusercontent.com/55OB_phWrUDH6ThZuNxCfwLham4Zwzr1UelbkjKmdB4NCtLc9Itzm7fayKiqAfqolhzARpB83VrLQNWAT-CGCyyPLy7APpeXYI9dCK4XfJA=w1280",
-    //     status: "Funniest professor of Keimyung",
-    //     email: "joh@kmu.ac.kr",
-    //     password: "MyPasswordIsReallyStrong",
-    //     createdAt: "2021-09-15T12:48:00.000Z",
-    //     updatedAt: "2021-09-15T12:48:00.000Z",
-    // };
-
     const login = async () => {
-        console.log("Login button pressed");
-        console.log(email + " " + password);
         const response = await connectClient(0, email, password);
-        console.log("Response from server:", response);
         if (response === "200 You are connected\n") {
             console.log("Client connected and approved!");
             setUser({
-                // id: user.id,
-                // name: user.name,
-                // imageUri: user.imageUri,
-                // status: user.status,
+                id: 0,
+                name: email,
+                imageUri:
+                    "@/assets/images/placeholders/profile_placeholder.png",
+                status: "Hey there!",
                 email: email,
                 password: password,
-                accessToken: response,
-                // createdAt: user.createdAt,
-                // updatedAt: user.updatedAt,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             });
             router.push(`/`);
         } else {
@@ -79,6 +65,7 @@ export default function LoginScreen() {
             <View
                 className={`flex flex-col justify-center text-center align-middle sm:p-36`}
             >
+                <Image source={relayLogoFull} className="mx-auto h-48 w-48" />
                 <TextInput
                     className="w-full border-2 border-slate-400 bg-gray-100 text-center"
                     placeholder="Email."

@@ -14,6 +14,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { AuthProvider } from "@/context/AuthProvider";
 import { useColorScheme } from "@/components/useColorScheme";
 import { WebSocketProvider } from "@/context/WebsocketProvider";
+import ChatsLayout from "./(tabs)/chats/_layout";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -68,15 +69,25 @@ function RootLayoutNav() {
                         />
                         <Stack.Screen
                             name="help-modal"
-                            options={{ presentation: "modal" }}
+                            options={{ presentation: "modal", title: "Help" }}
                         />
                         <Stack.Screen
                             name="notifications-modal"
-                            options={{ presentation: "modal" }}
+                            options={{
+                                presentation: "modal",
+                                title: "Notifications",
+                            }}
                         />
                         <Stack.Screen
                             name="(auth)/login"
                             options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="chats/[chatId]"
+                            options={{
+                                headerShown: false,
+                                presentation: "modal",
+                            }}
                         />
                     </Stack>
                 </AuthProvider>
