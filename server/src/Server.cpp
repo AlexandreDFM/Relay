@@ -38,7 +38,7 @@ void Server::broadcast(std::string msg, std::vector<int> ids, bool banned)
 
         // Logic for sending the message based on the 'banned' flag and presence in the vector
         if ((banned && !isInVector) || (!banned && isInVector)) {
-            pair.second->send_message(msg);
+            pair.second->send_message("600-" + msg);
         }
     }
 }

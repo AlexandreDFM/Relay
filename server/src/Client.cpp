@@ -188,7 +188,7 @@ void Client::tryConnectClient(std::vector<std::string> args)
                 _setupServerJson(user.second);
                 _listChats = getListAsVector(user.second, "list_chats");
 
-                send_message("200 You are connected\n");
+                send_message("200-" + std::to_string(_id) + "-You are connected\n");
             }
         }
     }
@@ -265,7 +265,7 @@ BROADCAST_ARGS Client::modifyMessage(std::vector<std::string> args)
                         if (msg.second.get<int>("id") == messageId && msg.second.get<int>("aut") == _id) {
                             // Modify the message content
                             msg.second.put("data", mergeStringsExceptFirst(args, 3));
-                            msg.second.put("time", get_current_datetime());
+                            msg.second.put("time", msg.second.get<std::string>("time")); // Update the time
                             msg.second.put("aut", _id); // Update the author ID
                             messageFound = true;
                             break;
@@ -278,6 +278,8 @@ BROADCAST_ARGS Client::modifyMessage(std::vector<std::string> args)
                     }
 
                     chat->update_json_file();
+
+                    send_message("200 Message updated\n");
                     std::cout << "Message updated successfully" << std::endl;
                 }
 
