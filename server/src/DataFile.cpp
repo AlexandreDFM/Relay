@@ -21,13 +21,11 @@ JsonFile::JsonFile(std::string path)
 
 boost::property_tree::ptree& JsonFile::getJson()
 {
-    std::lock_guard<std::mutex> lock(_JsonMutex);
     return _json;
 }
 
 void JsonFile::update_json_file()
 {
-    std::lock_guard<std::mutex> lock(_JsonMutex);
     try {
         boost::property_tree::write_json(_path, _json);
     } catch (const boost::property_tree::json_parser_error& e) {

@@ -357,14 +357,17 @@ BROADCAST_ARGS Client::sendMessageOnChat(std::vector<std::string> args)
 
                     chat->getJson().get_child("messages").push_back(std::make_pair("", message));
                     chat->update_json_file();
-                    std::cout << "Update new chat" << std::endl;
                 }
+
+                std::cout << "Message sent successfully" << std::endl;
 
                 std::vector<int> _listAutUsers;
                 for (auto dict : _ChatsJson->getJson().get_child("chats"))
                     if (dict.second.get<std::string>("id") == args[1])
                         _listAutUsers = getListAsVector(dict.second, "aut_user");
                 _listAutUsers.erase(std::remove(_listAutUsers.begin(), _listAutUsers.end(), _id), _listAutUsers.end());
+
+                send_message("200 Message sent\n");
 
                 return std::make_tuple(std::move(_listAutUsers), false, "New message on Chat " + args[1]);
             } else {

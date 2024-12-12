@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "@/components/Themed";
 import { useAuth } from "@/context/AuthProvider";
@@ -18,6 +18,7 @@ export default function ChatPage() {
     const { user } = useAuth();
     const { isLogged } = useAuth();
     const { isConnected } = useWebSocket();
+    const scrollViewRef = useRef<ScrollView>(null);
     const [input, setInput] = useState<string>("");
     const { chatId } = route.params as { chatId: string };
     const [messages, setMessages] = useState<MessageData[]>([]);
@@ -54,6 +55,7 @@ export default function ChatPage() {
     }, [isLogged, isConnected]);
 
     const sendMessage = async () => {
+        console.log("Sending message chatid input", chatId, input);
         const response = await sendMessageOnServer(0, parseInt(chatId), input);
         console.log("On send message, Server says : ", response);
         setInput("");
@@ -88,11 +90,24 @@ export default function ChatPage() {
         fetchMessages();
     };
 
+    useEffect(() => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollToEnd({ animated: true });
+        }
+    }, []);
+
     return (
         <View className="flex-1">
             <SafeAreaProvider>
                 <SafeAreaView className="flex-1 pt-2" edges={["top"]}>
-                    <ScrollView>
+                    <ScrollView
+                        ref={scrollViewRef}
+                        onContentSizeChange={() =>
+                            scrollViewRef.current?.scrollToEnd({
+                                animated: true,
+                            })
+                        }
+                    >
                         {messages.length === 0 ? (
                             <View className="flex-row p-4 align-middle">
                                 <Text>No messages</Text>
