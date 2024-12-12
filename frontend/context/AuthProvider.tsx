@@ -83,8 +83,8 @@ export function AuthProvider({
             if (isLogged) return;
             if (!(isConnected && user)) return;
             const response = await connectClient(0, user.email, user.password);
-            if (response === "200 You are connected\n") {
-                console.log("Client connected and approved!");
+            const responseSplited = response.split("-");
+            if (responseSplited[0] === "200") {
                 setUser({
                     ...user,
                 });
