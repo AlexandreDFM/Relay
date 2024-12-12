@@ -81,13 +81,6 @@ function RootLayoutNav() {
                             name="(auth)/login"
                             options={{ headerShown: false }}
                         />
-                        <Stack.Screen
-                            name="chats/[chatId]"
-                            options={{
-                                headerShown: false,
-                                presentation: "modal",
-                            }}
-                        />
                     </Stack>
                 </AuthProvider>
             </WebSocketProvider>
