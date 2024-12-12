@@ -1,5 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
+import { Image } from "react-native";
 import Colors from "@/constants/Colors";
 import { Pressable } from "react-native";
 import { Link, Tabs } from "expo-router";
@@ -8,7 +9,6 @@ import { useWebSocket } from "@/context/WebsocketProvider";
 import { useColorScheme } from "@/components/useColorScheme";
 import relayIcon from "@/assets/images/logos/relay-icon.svg";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { Image } from "react-native";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {

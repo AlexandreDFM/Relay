@@ -10,11 +10,10 @@ import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { AuthProvider } from "@/context/AuthProvider";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useColorScheme } from "@/components/useColorScheme";
 import { WebSocketProvider } from "@/context/WebsocketProvider";
-import ChatsLayout from "./(tabs)/chats/_layout";
 
 export {
     // Catch any errors thrown by the Layout component.

@@ -1,16 +1,15 @@
 import {
-    StyleSheet,
-    TextInput,
-    Modal,
-    useColorScheme,
-    Appearance,
     View,
+    Modal,
+    TextInput,
+    Appearance,
+    useColorScheme,
 } from "react-native";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native";
 import { Text } from "@/components/Themed";
-import { useAuth } from "@/context/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
+import { useAuth } from "@/context/AuthProvider";
 
 const initialUser = {
     username: "HyunChul Joe",
