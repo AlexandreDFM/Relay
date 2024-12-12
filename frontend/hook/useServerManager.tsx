@@ -89,7 +89,8 @@ const useServerManager = (): UseServerManager => {
     const handleRequest = useCallback(
         async (message: string): Promise<WebSocketResponse> => {
             if (!isConnected) {
-                throw new Error("WebSocket is not connected");
+                // throw new Error("WebSocket is not connected");
+                console.error("WebSocket is not connected");
             }
             return await sendMessage(message);
         },
