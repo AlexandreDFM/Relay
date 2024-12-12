@@ -73,8 +73,11 @@ export default function HomeScreen() {
                             ),
                     )
                 ) : (
-                    <View className="ml-4 flex-row items-center p-2">
-                        No connected players
+                    <View
+                        className="ml-4 flex-row items-center p-2"
+                        key="No connected players"
+                    >
+                        <Text>No connected players</Text>
                     </View>
                 )}
                 <Text className="text-lg font-bold">Disconnected Players:</Text>
@@ -103,8 +106,11 @@ export default function HomeScreen() {
                             ),
                     )
                 ) : (
-                    <View className="ml-4 flex-row items-center p-2">
-                        No disconnected players
+                    <View
+                        className="ml-4 flex-row items-center p-2"
+                        key="No disconnected players"
+                    >
+                        <Text>No disconnected players</Text>
                     </View>
                 )}
             </View>
