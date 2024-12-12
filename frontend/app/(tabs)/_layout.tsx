@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text } from "react-native";
 import { Image } from "react-native";
 import Colors from "@/constants/Colors";
@@ -20,7 +20,18 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
+    const { broadcast } = useWebSocket();
     const { isConnected } = useWebSocket();
+    const [notifications, setNotifications] = React.useState(0);
+
+    useEffect(() => {
+        if (broadcast != "") {
+            const interval = setInterval(() => {
+                setNotifications(notifications + 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [broadcast]);
 
     return (
         <Tabs
@@ -97,7 +108,12 @@ export default function TabLayout() {
                     title: "Chat",
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <TabBarIcon name="comment" color={color} />
+                        <>
+                            <TabBarIcon name="comment" color={color} />
+                            <div
+                                className={`absolute bottom-0 right-0 h-3 w-3 rounded-full ${notifications > 0 ? "border-2 border-black bg-red-500" : ""}`}
+                            />
+                        </>
                     ),
                 }}
             />
