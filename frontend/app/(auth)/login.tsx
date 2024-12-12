@@ -25,10 +25,12 @@ export default function LoginScreen() {
 
     const login = async () => {
         const response = await connectClient(0, email, password);
-        if (response === "200 You are connected\n") {
+        const responseSplited = response.split("-");
+        if (responseSplited[0] === "200") {
+            const id = responseSplited[1];
             console.log("Client connected and approved!");
             setUser({
-                id: 0,
+                id: parseInt(id),
                 name: email,
                 imageUri:
                     "@/assets/images/placeholders/profile_placeholder.png",
@@ -65,7 +67,11 @@ export default function LoginScreen() {
             <View
                 className={`flex flex-col justify-center text-center align-middle sm:p-36`}
             >
-                <Image source={relayLogoFull} className="mx-auto h-48 w-48" />
+                <Image
+                    source={relayLogoFull}
+                    className="mx-auto h-auto w-auto"
+                    style={{ width: 200, height: 100 }}
+                />
                 <TextInput
                     className="w-full border-2 border-slate-400 bg-gray-100 text-center"
                     placeholder="Email."
