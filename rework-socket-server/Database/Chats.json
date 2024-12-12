@@ -1,0 +1,51 @@
+{
+    "nb_chat": "7",
+    "chats": [
+        {
+            "invite": "invite_chat 0",
+            "id": "0",
+            "name": "Super BBB",
+            "aut_user": [
+                "0",
+                "1",
+                "2"
+            ]
+        },
+        {
+            "invite": "invite_chat 1",
+            "id": "1",
+            "name": "private",
+            "aut_user": [
+                "0",
+                "1"
+            ]
+        },
+        {
+            "invite": "invite_chat 2",
+            "id": "2",
+            "name": "private",
+            "aut_user": [
+                "0",
+                "2"
+            ]
+        },
+        {
+            "invite": "invite_chat 3",
+            "id": "3",
+            "name": "private",
+            "aut_user": [
+                "2",
+                "1"
+            ]
+        },
+        {
+            "id": "6",
+            "name": "Not",
+            "invite": "invite_chat 6",
+            "aut_user": [
+                "0",
+                "2"
+            ]
+        }
+    ]
+}

@@ -1,7 +1,15 @@
+import {
+    View,
+    Modal,
+    TextInput,
+    Appearance,
+    useColorScheme,
+} from "react-native";
 import { useState } from "react";
-import { StyleSheet, TextInput, Modal } from "react-native";
-import { Text, View } from "@/components/Themed";
+import { Text } from "@/components/Themed";
+import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
+import { useAuth } from "@/context/AuthProvider";
 
 const initialUser = {
     username: "HyunChul Joe",
@@ -12,20 +20,36 @@ const initialUser = {
 type UserField = "username" | "password" | "email";
 
 export default function SettingsScreen() {
+    const colorScheme = useColorScheme();
+
+    const { clearUser } = useAuth();
+    const [newData, setNewData] = useState("");
     const [user, setUser] = useState(initialUser);
     const [showPassword, setShowPassword] = useState(false);
     const [editingField, setEditingField] = useState<UserField | null>(null);
-    const [newData, setNewData] = useState("");
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibleDelete, setModalVisibleDelete] = useState(false);
+    const [modalVisibleDisconnection, setModalVisibleDisconnection] =
+        useState(false);
+
+    const handleDisconnectionAccount = () => {
+        console.log("Disconnection account");
+        setModalVisibleDisconnection(true);
+    };
+
+    const confirmDisconnectionAccount = () => {
+        console.log("Account disconnection");
+        clearUser();
+        setModalVisibleDisconnection(false);
+    };
 
     const handleDeleteAccount = () => {
         console.log("Delete account");
-        setModalVisible(true);
+        setModalVisibleDelete(true);
     };
 
     const confirmDeleteAccount = () => {
         console.log("Account deleted");
-        setModalVisible(false);
+        setModalVisibleDelete(false);
     };
 
     const handleChangeData = (field: UserField) => {
@@ -35,131 +59,252 @@ export default function SettingsScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.infoContainer}>
-                <View style={styles.row}>
-                    <Text style={styles.option}>Username: {user.username}</Text>
+        <View className="flex-1">
+            <View className="flex h-20 flex-row items-center border-b-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="color-palette" size={24} color="black" />
+                    <Text className="mr-3 text-base">
+                        Color Scheme: {colorScheme}
+                    </Text>
+                </div>
+                <div className="flex-shrink">
                     <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => setEditingField("username")}
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() =>
+                            colorScheme === "dark"
+                                ? Appearance.setColorScheme("light")
+                                : Appearance.setColorScheme("dark")
+                        }
                     >
-                        <Text style={styles.buttonText}>Change</Text>
+                        <Text lightColor="white" className="font-bold">
+                            {colorScheme === "dark"
+                                ? "Light Mode"
+                                : "Dark Mode"}
+                        </Text>
                     </TouchableOpacity>
-                </View>
-                {editingField === "username" && (
-                    <View style={styles.inputContainer}>
+                </div>
+            </View>
+            <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="language" size={24} color="black" />
+                    <Text className="mr-3 text-base">Language: English</Text>
+                </div>
+                <div className="flex-shrink">
+                    <TouchableOpacity
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
+                        onPress={() => alert("Change language")}
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            Change Language
+                        </Text>
+                    </TouchableOpacity>
+                </div>
+            </View>
+            <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="person" size={24} color="black" />
+                    <Text className="mr-3 text-base">
+                        Username: {user.username}
+                    </Text>
+                </div>
+                <TouchableOpacity
+                    className="ml-3 rounded-lg bg-blue-500 p-2"
+                    onPress={() => setEditingField("username")}
+                >
+                    <Text lightColor="white" className="font-bold">
+                        Change
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            {editingField === "username" && (
+                <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                    <div className="flex flex-grow flex-row items-center gap-5">
                         <TextInput
-                            style={styles.input}
+                            className="h-10 w-3/5 border-2 border-gray-500 px-3"
                             value={newData}
                             onChangeText={setNewData}
                             placeholder="Enter new username"
                         />
+                    </div>
+                    <div className="flex-shrink">
                         <TouchableOpacity
-                            style={styles.button}
+                            className="ml-3 rounded-lg bg-blue-500 p-2"
                             onPress={() => handleChangeData("username")}
                         >
-                            <Text style={styles.buttonText}>Save</Text>
+                            <Text lightColor="white" className="font-bold">
+                                Save
+                            </Text>
                         </TouchableOpacity>
-                    </View>
-                )}
-                <View style={styles.row}>
-                    <Text style={styles.option}>Email: {user.email}</Text>
+                    </div>
+                </View>
+            )}
+            <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="mail" size={24} color="black" />
+                    <div>
+                        <Text className="text-base">Email: {user.email}</Text>
+                    </div>
+                </div>
+                <div className="flex-shrink">
                     <TouchableOpacity
-                        style={styles.button}
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
                         onPress={() => setEditingField("email")}
                     >
-                        <Text style={styles.buttonText}>Change</Text>
+                        <Text lightColor="white" className="font-bold">
+                            Change
+                        </Text>
                     </TouchableOpacity>
-                </View>
-                {editingField === "email" && (
-                    <View style={styles.inputContainer}>
+                </div>
+            </View>
+            {editingField === "email" && (
+                <View className="flex h-20 flex-row border-y-2 border-slate-500 p-4">
+                    <div className="flex flex-grow flex-row items-center gap-5">
                         <TextInput
-                            style={styles.input}
+                            className="mr-3 h-10 w-3/5 border-2 border-gray-500 px-3"
                             value={newData}
                             onChangeText={setNewData}
                             placeholder="Enter new email"
                         />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => handleChangeData("email")}
-                        >
-                            <Text style={styles.buttonText}>Save</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-                <View style={styles.row}>
-                    <Text style={styles.option}>
+                    </div>
+                    <TouchableOpacity
+                        className="mr-auto rounded-lg bg-blue-500 p-2"
+                        onPress={() => handleChangeData("email")}
+                    >
+                        <Text lightColor="white" className="font-bold">
+                            Save
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            <View className="flex h-20 flex-row border-y-2 border-b-4 border-slate-500 p-4">
+                <div className="flex flex-grow flex-row items-center gap-5">
+                    <Ionicons name="lock-closed" size={24} color="black" />
+                    <Text className="mr-3 text-base">
                         Password: {showPassword ? user.password : "********"}
                     </Text>
+                </div>
+                <div className="flex flex-shrink flex-row">
                     <TouchableOpacity
-                        style={styles.button}
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
                         onPress={() => setShowPassword(!showPassword)}
                     >
-                        <Text style={styles.buttonText}>
+                        <Text lightColor="white" className="font-bold">
                             {showPassword ? "Hide" : "Show"}
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        className="ml-3 rounded-lg bg-blue-500 p-2"
                         onPress={() => setEditingField("password")}
                     >
-                        <Text style={styles.buttonText}>Change</Text>
+                        <Text lightColor="white" className="font-bold">
+                            Change
+                        </Text>
                     </TouchableOpacity>
-                </View>
-                {editingField === "password" && (
-                    <View style={styles.inputContainer}>
+                </div>
+            </View>
+            {editingField === "password" && (
+                <View className="flex h-20 flex-row border-b-4 border-slate-500 p-4">
+                    <div className="flex flex-grow flex-row items-center gap-5">
                         <TextInput
-                            style={styles.input}
+                            className="h-10 w-3/5 border-2 border-gray-500 px-3"
                             value={newData}
                             onChangeText={setNewData}
                             placeholder="Enter new password"
                         />
+                    </div>
+                    <div className="flex-shrink">
                         <TouchableOpacity
-                            style={styles.button}
+                            className="ml-3 rounded-lg bg-blue-500 p-2"
                             onPress={() => handleChangeData("password")}
                         >
-                            <Text style={styles.buttonText}>Save</Text>
+                            <Text lightColor="white" className="font-bold">
+                                Save
+                            </Text>
                         </TouchableOpacity>
-                    </View>
-                )}
-            </View>
-            <TouchableOpacity
-                className="bg-pink-700"
-                style={styles.deconnexionButton}
-                onPress={handleDeleteAccount}
-            >
-                <Text style={styles.deleteButtonText}>Deconnexion Account</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={handleDeleteAccount}
-            >
-                <Text style={styles.deleteButtonText}>Delete Account</Text>
-            </TouchableOpacity>
+                    </div>
+                </View>
+            )}
+            <div className="mb-20 mt-auto flex flex-col gap-3 p-4">
+                <TouchableOpacity
+                    className="border-4 border-slate-500 bg-pink-700 p-4"
+                    onPress={handleDisconnectionAccount}
+                >
+                    <Text lightColor="white" className="text-center font-bold">
+                        Disconnection Account
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="border-4 border-slate-500 bg-red-500 p-4"
+                    onPress={handleDeleteAccount}
+                >
+                    <Text lightColor="white" className="text-center font-bold">
+                        Delete Account
+                    </Text>
+                </TouchableOpacity>
+            </div>
 
             <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                animationType="fade"
+                transparent
+                visible={modalVisibleDisconnection}
+                onRequestClose={() => setModalVisibleDisconnection(false)}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>
-                            Are you sure you want to delete your account?
+                <View className="flex-1 items-center justify-center align-middle backdrop-blur">
+                    <View className="m-5 items-center rounded-3xl bg-white p-9 shadow-black">
+                        <Text className="mb-4 text-center">
+                            Are you sure you want to disconnection your account?
                         </Text>
-                        <View style={styles.modalButtons}>
+                        <View className="w-full flex-row justify-between">
                             <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(false)}
+                                className="ml-3 rounded-lg bg-gray-500 p-2"
+                                onPress={() =>
+                                    setModalVisibleDisconnection(false)
+                                }
                             >
-                                <Text style={styles.buttonText}>Cancel</Text>
+                                <Text lightColor="white" className="font-bold">
+                                    Cancel
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.button, styles.buttonDelete]}
+                                className="ml-3 rounded-lg bg-red-500 p-2"
+                                onPress={confirmDisconnectionAccount}
+                            >
+                                <Text lightColor="white" className="font-bold">
+                                    Disconnection
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisibleDelete}
+                onRequestClose={() => setModalVisibleDelete(false)}
+            >
+                <View className="flex-1 items-center justify-center align-middle backdrop-blur">
+                    <View className="m-5 items-center rounded-3xl bg-white p-9 shadow-black">
+                        <Text className="mb-4 text-center">
+                            Are you sure you want to delete your account?
+                        </Text>
+                        <View className="w-full flex-row justify-between">
+                            <TouchableOpacity
+                                className="ml-3 rounded-lg bg-gray-500 p-2"
+                                onPress={() => setModalVisibleDelete(false)}
+                            >
+                                <Text lightColor="white" className="font-bold">
+                                    Cancel
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="ml-3 rounded-lg bg-red-500 p-2"
                                 onPress={confirmDeleteAccount}
                             >
-                                <Text style={styles.buttonText}>Delete</Text>
+                                <Text lightColor="white" className="font-bold">
+                                    Delete
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -168,98 +313,3 @@ export default function SettingsScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    infoContainer: {
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    row: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginVertical: 5,
-    },
-    option: {
-        fontSize: 16,
-        marginRight: 10,
-    },
-    button: {
-        backgroundColor: "blue",
-        padding: 5,
-        borderRadius: 5,
-        marginLeft: 10,
-    },
-    buttonText: {
-        color: "white",
-        fontWeight: "bold",
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 10,
-    },
-    input: {
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        width: "70%",
-        marginRight: 10,
-    },
-    deconnexionButton: {
-        marginTop: 20,
-        padding: 10,
-        borderRadius: 5,
-    },
-    deleteButton: {
-        marginTop: 20,
-        backgroundColor: "red",
-        padding: 10,
-        borderRadius: 5,
-    },
-    deleteButtonText: {
-        color: "white",
-        fontWeight: "bold",
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.9)",
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: "center",
-    },
-    modalButtons: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: "100%",
-    },
-    buttonClose: {
-        backgroundColor: "gray",
-    },
-    buttonDelete: {
-        backgroundColor: "red",
-    },
-});
