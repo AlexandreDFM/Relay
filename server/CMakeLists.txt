@@ -73,11 +73,28 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 message(STATUS "Source directory for symlink: ${CMAKE_SOURCE_DIR}/server/Database")
 message(STATUS "Target directory for symlink: $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database")
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/server/Database
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
-)
+# Add a post-build command to copy the Database directory to the build directory
+# Try to use a symlink if possible, otherwise copy the directory
+
+# Check if the path does not exist
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/server/Database)
+    message(FATAL_ERROR "Database directory not found. Please create the Database directory in the server directory.")
+    # Check if the directive is a directory
+    elseif (NOT IS_DIRECTORY ${CMAKE_SOURCE_DIR}/server/Database)
+        if (WIN32)
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/server/Database
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
+            )
+        else()
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E create_symlink
+                    ${CMAKE_SOURCE_DIR}/server/Database
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
+        )
+    endif()
+endif()
 
 # Add Boost include directories and libraries after the target is created
 if (WIN32)
