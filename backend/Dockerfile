@@ -15,4 +15,4 @@ RUN set -ex;              \
     cd /usr/src/example;  \
     cmake .; make; make install
 
-ENTRYPOINT ["relay_server"]
+ENTRYPOINT ["relay_socket_server"]

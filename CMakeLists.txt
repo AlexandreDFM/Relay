@@ -6,7 +6,7 @@ project(Relay)
 # BUILD BACKEND SOCKET SERVER
 ###############################################################################
 
-add_subdirectory(server/)
+add_subdirectory(backend/)
 
 ###############################################################################
 # BUILD BACKEND REWORK SOCKET SERVER

@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 # Set the project name and version
-project(relay_server VERSION 1.0)
+project(relay_socket_server VERSION 1.0)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${CMAKE_SOURCE_DIR}/includes)
 
 # Attempt to find the Boost library
-find_package(Boost COMPONENTS iostreams system json beast)
+find_package(Boost COMPONENTS iostreams system thread json beast property_tree)
 
 if (NOT Boost_FOUND)
     message(STATUS "Boost not found. Falling back to CPM for downloading Boost.")
@@ -38,36 +38,30 @@ if (NOT Boost_FOUND)
             VERSION ${BOOST_VERSION}
             GITHUB_REPOSITORY "boostorg/boost"
             GIT_TAG "boost-${BOOST_VERSION}"
-            OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES asio\\\;iostreams\\\;system\\\;json\\\;beast"
+            OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_INCLUDE_LIBRARIES asio\\\;iostreams\\\;system\\\;thread\\\;json\\\;beast\\\;property_tree"
     )
 
-    if (Boost_Backend_ADDED)
+    if (Boost_ADDED)
         message(STATUS "Boost downloaded and configured via CPM: ${Boost_INCLUDE_DIRS}")
     else()
-        message(STATUS "Failed to download Boost using CPM. Maybe it was already found.")
+        message(FATAL_ERROR "Failed to download Boost using CPM. Maybe it was already found.")
     endif()
 else()
     # If Boost is found, include directories and libraries
     message(STATUS "Boost found: ${Boost_INCLUDE_DIRS}")
 endif()
 
+# Add the Boost include directories
+#include_directories(${Boost_INCLUDE_DIRS})
 
-# Add the executable from the source files in the src directory
 file(GLOB_RECURSE SOURCES
-        ./src/*.cpp
-        ./includes/*.h
-        ./includes/*.hpp
+    ./src/*.cpp
+    ./includes/*.h
+    ./includes/*.hpp
 )
 
 # Include directories
 include_directories(./includes)
-
-message(STATUS "Boost Include Directories: ${Boost_INCLUDE_DIRS}")
-message(STATUS "Boost Libraries: ${Boost_LIBRARIES}")
-message(STATUS "CMake Binary Dir: ${CMAKE_BINARY_DIR}")
-
-# Include the Boost include directories
-include_directories(${CMAKE_BINARY_DIR}/_cpm/Boost/include)
 
 # Print the sources
 message(STATUS "Sources: ${SOURCES}")
@@ -75,23 +69,38 @@ message(STATUS "Sources: ${SOURCES}")
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Add Boost include directories and libraries after the target is created
-if (Boost_FOUND OR Boost_ADDED)
-    if (WIN32)
-        # Add symlink to ./Database in the build directory
-        message(STATUS "Source directory for symlink: ${CMAKE_SOURCE_DIR}/server/Database")
-        message(STATUS "Target directory for symlink: $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database")
+# Add symlink to ./Database in the build directory
+message(STATUS "Source directory for symlink: ${CMAKE_SOURCE_DIR}/server/Database")
+message(STATUS "Target directory for symlink: $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database")
 
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/server/Database
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
+# Add a post-build command to copy the Database directory to the build directory
+# Try to use a symlink if possible, otherwise copy the directory
+
+# Check if the path does not exist
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/server/Database)
+    message(STATUS "Database directory not found. Please create the Database directory in the server directory.")
+    # Check if the directive is a directory
+    elseif (NOT IS_DIRECTORY ${CMAKE_SOURCE_DIR}/server/Database)
+        if (WIN32)
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/server/Database
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
+            )
+        else()
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E create_symlink
+                    ${CMAKE_SOURCE_DIR}/server/Database
+                    $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Database
         )
-
-        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams Boost::system Boost::json Boost::beast ws2_32 Mswsock)
-    else()
-        target_link_libraries(${PROJECT_NAME} Boost::asio Boost::iostreams Boost::system Boost::json Boost::beast pthread)
     endif()
+endif()
+
+# Add Boost include directories and libraries after the target is created
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast ws2_32 Mswsock)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio Boost::iostreams Boost::property_tree Boost::system Boost::thread Boost::json Boost::beast pthread)
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
