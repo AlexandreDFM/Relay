@@ -1,10 +1,13 @@
-import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
-
+import React, { useEffect } from "react";
+import { Text } from "react-native";
+import { Image } from "react-native";
 import Colors from "@/constants/Colors";
+import { Pressable } from "react-native";
+import { Link, Tabs } from "expo-router";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useWebSocket } from "@/context/WebsocketProvider";
 import { useColorScheme } from "@/components/useColorScheme";
+import relayIcon from "@/assets/images/logos/relay-icon.svg";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -17,6 +20,18 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
+    const { broadcast } = useWebSocket();
+    const { isConnected } = useWebSocket();
+    const [notifications, setNotifications] = React.useState(0);
+
+    useEffect(() => {
+        if (broadcast != "") {
+            const interval = setInterval(() => {
+                setNotifications(notifications + 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [broadcast]);
 
     return (
         <Tabs
@@ -34,24 +49,56 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="home" color={color} />
                     ),
+                    headerLeft: () => (
+                        <div className="p-4">
+                            <Image
+                                source={relayIcon}
+                                style={{
+                                    width: 40,
+                                    height: 40,
+                                }}
+                            />
+                        </div>
+                    ),
                     headerRight: () => (
-                        <Link href="/modal" asChild>
-                            <Pressable>
-                                {({ pressed }) => (
-                                    <FontAwesome
-                                        name="info-circle"
-                                        size={25}
-                                        color={
-                                            Colors[colorScheme ?? "light"].text
-                                        }
-                                        style={{
-                                            marginRight: 15,
-                                            opacity: pressed ? 0.5 : 1,
-                                        }}
-                                    />
-                                )}
-                            </Pressable>
-                        </Link>
+                        <div className="flex flex-row">
+                            <Link href="/notifications-modal" asChild>
+                                <Pressable>
+                                    {({ pressed }) => (
+                                        <FontAwesome
+                                            name="bell"
+                                            size={25}
+                                            color={
+                                                Colors[colorScheme ?? "light"]
+                                                    .text
+                                            }
+                                            style={{
+                                                marginRight: 15,
+                                                opacity: pressed ? 0.5 : 1,
+                                            }}
+                                        />
+                                    )}
+                                </Pressable>
+                            </Link>
+                            <Link href="/help-modal" asChild>
+                                <Pressable>
+                                    {({ pressed }) => (
+                                        <FontAwesome
+                                            name="question"
+                                            size={25}
+                                            color={
+                                                Colors[colorScheme ?? "light"]
+                                                    .text
+                                            }
+                                            style={{
+                                                marginRight: 15,
+                                                opacity: pressed ? 0.5 : 1,
+                                            }}
+                                        />
+                                    )}
+                                </Pressable>
+                            </Link>
+                        </div>
                     ),
                 }}
             />
@@ -59,27 +106,14 @@ export default function TabLayout() {
                 name="chats"
                 options={{
                     title: "Chat",
+                    headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <TabBarIcon name="comment" color={color} />
-                    ),
-                    headerRight: () => (
-                        <Link href="/modal" asChild>
-                            <Pressable>
-                                {({ pressed }) => (
-                                    <FontAwesome
-                                        name="info-circle"
-                                        size={25}
-                                        color={
-                                            Colors[colorScheme ?? "light"].text
-                                        }
-                                        style={{
-                                            marginRight: 15,
-                                            opacity: pressed ? 0.5 : 1,
-                                        }}
-                                    />
-                                )}
-                            </Pressable>
-                        </Link>
+                        <>
+                            <TabBarIcon name="comment" color={color} />
+                            <div
+                                className={`absolute bottom-0 right-0 h-3 w-3 rounded-full ${notifications > 0 ? "border-2 border-black bg-red-500" : ""}`}
+                            />
+                        </>
                     ),
                 }}
             />
@@ -87,8 +121,14 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: "Profile",
+                    headerShown: false,
                     tabBarIcon: ({ color }) => (
-                        <TabBarIcon name="user" color={color} />
+                        <>
+                            <TabBarIcon name="user" color={color} />
+                            <div
+                                className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-black ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+                            />
+                        </>
                     ),
                 }}
             />
@@ -98,6 +138,15 @@ export default function TabLayout() {
                     title: "Settings",
                     tabBarIcon: ({ color }) => (
                         <TabBarIcon name="cogs" color={color} />
+                    ),
+                    header: () => (
+                        <div className="w-full flex-row border-b-4 border-slate-500 bg-transparent p-4">
+                            <div className="flex flex-row justify-center gap-4">
+                                <Text className="text-xl font-bold">
+                                    Settings
+                                </Text>
+                            </div>
+                        </div>
                     ),
                 }}
             />

@@ -1,18 +1,19 @@
-import "../assets/global.css";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
     DarkTheme,
     DefaultTheme,
     ThemeProvider,
 } from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import "react-native-reanimated";
 
-import { useColorScheme } from "@/components/useColorScheme";
+import "../assets/global.css";
+import "react-native-reanimated";
+import { useEffect } from "react";
+import { Stack } from "expo-router";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 import { AuthProvider } from "@/context/AuthProvider";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useColorScheme } from "@/components/useColorScheme";
+import { WebSocketProvider } from "@/context/WebsocketProvider";
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -58,22 +59,31 @@ function RootLayoutNav() {
         <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-            <AuthProvider>
-                <Stack>
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="modal"
-                        options={{ presentation: "modal" }}
-                    />
-                    <Stack.Screen
-                        name="(auth)/login"
-                        options={{ headerShown: false }}
-                    />
-                </Stack>
-            </AuthProvider>
+            <WebSocketProvider>
+                <AuthProvider>
+                    <Stack>
+                        <Stack.Screen
+                            name="(tabs)"
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="help-modal"
+                            options={{ presentation: "modal", title: "Help" }}
+                        />
+                        <Stack.Screen
+                            name="notifications-modal"
+                            options={{
+                                presentation: "modal",
+                                title: "Notifications",
+                            }}
+                        />
+                        <Stack.Screen
+                            name="(auth)/login"
+                            options={{ headerShown: false }}
+                        />
+                    </Stack>
+                </AuthProvider>
+            </WebSocketProvider>
         </ThemeProvider>
     );
 }
